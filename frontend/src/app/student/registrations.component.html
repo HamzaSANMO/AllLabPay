@@ -1,0 +1,10 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Mes Inscriptions</h2>
+  <div class="space-y-4">
+    <div *ngFor="let reg of registrations" class="bg-white p-4 rounded shadow">
+      <p>TP: {{ reg.tp.titre }}</p>
+      <p>Statut: {{ reg.status }}</p>
+      <p>Date: {{ reg.createdAt | date }}</p>
+    </div>
+  </div>
+</div>

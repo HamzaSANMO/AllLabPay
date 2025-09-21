@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrateur - LabPay</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #3B82F6;
+            --secondary: #2563EB;
+            --accent: #60A5FA;
+            --light: #F3F4F6;
+            --dark: #1F2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                transition: left 0.3s ease;
+                z-index: 40;
+                height: 100vh;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 30;
+            }
+            
+            .overlay.open {
+                display: block;
+            }
+        }
+        
+        .active-tab {
+            border-bottom: 3px solid #3B82F6;
+            color: #2563EB;
+            font-weight: 600;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-active {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-inactive {
+            background-color: #FEE2E2;
+            color: #B91C1C;
+        }
+        
+        .status-waiting {
+            background-color: #E0E7FF;
+            color: #3730A3;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white shadow-md">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 h-10 w-10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-flask text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-blue-600">LabPay</span>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-cog text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Admin</h3>
+                        <p class="text-sm text-gray-600">Administrateur système</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#dashboard" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                    <a href="#teachers" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-chalkboard-teacher w-5"></i>
+                        <span>Gestion enseignants</span>
+                    </a>
+                    <a href="#students" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-user-graduate w-5"></i>
+                        <span>Gestion étudiants</span>
+                    </a>
+                    <a href="#tps" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-vial w-5"></i>
+                        <span>Gestion TP</span>
+                    </a>
+                    <a href="#payments" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-money-bill-wave w-5"></i>
+                        <span>Configuration paiements</span>
+                    </a>
+                    <a href="#reports" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-chart-bar w-5"></i>
+                        <span>Rapports</span>
+                    </a>
+                    <a href="#results" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-file-pdf w-5"></i>
+                        <span>Résultats TP</span>
+                    </a>
+                    <a href="#profile" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-user w-5"></i>
+                        <span>Mon profil</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="md:hidden text-gray-700 mr-4">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-800">Tableau de bord Administrateur</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-600">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">5</span>
+                    </button>
+                    <div class="hidden md:block">
+                        <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="p-6">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Enseignants</h3>
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chalkboard-teacher text-blue-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">42</p>
+                        <p class="text-sm text-gray-600 mt-2"><span class="text-red-500 font-medium">3</span> en attente de validation</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Étudiants</h3>
+                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user-graduate text-green-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">1,542</p>
+                        <p class="text-sm text-gray-600 mt-2"><span class="text-green-500 font-medium">+24</span> ce mois-ci</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">TP actifs</h3>
+                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-vial text-purple-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">87</p>
+                        <p class="text-sm text-gray-600 mt-2">Dans 12 départements</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Paiements</h3>
+                            <div class="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-money-bill-wave text-yellow-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">4.2M F</p>
+                        <p class="text-sm text-gray-600 mt-2">Ce semestre</p>
+                    </div>
+                </div>
+                
+                <!-- Teachers Management Section -->
+                <div id="teachers" class="mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Gestion des enseignants</h2>
+                        <div class="flex space-x-2">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition" onclick="openTeacherModal()">
+                                <i class="fas fa-plus mr-2"></i>Créer un compte
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="border-b border-gray-200">
+                            <div class="flex overflow-x-auto">
+                                <button class="px-6 py-3 border-b-2 border-blue-500 text-blue-600 font-medium active-tab">
+                                    Tous les enseignants
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    En attente
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Actifs
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Inactifs
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Département</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="h-10 w-10 flex-shrink-0">
+                                                    <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-blue-600"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Dr. Koffi Mensah</div>
+                                                    <div class="text-sm text-gray-500">Physique</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">k.mensah@edu.uac.bj</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Physique</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-active">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">Modifier</button>
+                                            <button class="text-red-600 hover:text-red-900">Désactiver</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="h-10 w-10 flex-shrink-0">
+                                                    <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-blue-600"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Dr. Adjoa N'dri</div>
+                                                    <div class="text-sm text-gray-500">Chimie</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">a.ndri@edu.uac.bj</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Chimie</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-active">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">Modifier</button>
+                                            <button class="text-red-600 hover:text-red-900">Désactiver</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="h-10 w-10 flex-shrink-0">
+                                                    <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-blue-600"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Prof. Yao Kouassi</div>
+                                                    <div class="text-sm text-gray-500">Informatique</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">y.kouassi@edu.uac.bj</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Informatique</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-inactive">Inactif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">Modifier</button>
+                                            <button class="text-green-600 hover:text-green-900">Activer</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Students Management Section -->
+                <div id="students" class="mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Gestion des étudiants</h2>
+                        <div class="flex space-x-2">
+                            <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                <i class="fas fa-file-import mr-2"></i>Importer
+                            </button>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                <i class="fas fa-plus mr-2"></i>Ajouter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <input type="text" placeholder="Rechercher un étudiant..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <button class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                    <i class="fas fa-file-export mr-2"></i>Exporter
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matricule</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Filière</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M001</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dupont Jean</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Informatique</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Licence 2</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-active">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">Modifier</button>
+                                            <button class="text-red-600 hover:text-red-900">Désactiver</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M002</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Martin Léa</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Physique</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Licence 3</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-active">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">Modifier</button>
+                                            <button class="text-red-600 hover:text-red-900">Désactiver</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M003</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Petit Thomas</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Chimie</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Master 1</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-inactive">Inactif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">Modifier</button>
+                                            <button class="text-green-600 hover:text-green-900">Activer</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Configuration Section -->
+                <div id="payments" class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Configuration des paiements</h2>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Numéros de paiement par enseignant</h3>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Enseignant</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Sélectionnez un enseignant</option>
+                                        <option value="koffi">Dr. Koffi Mensah (Physique)</option>
+                                        <option value="adjoa">Dr. Adjoa N'dri (Chimie)</option>
+                                        <option value="yao">Prof. Yao Kouassi (Informatique)</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Département</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Sélectionnez un département</option>
+                                        <option value="informatique">Informatique</option>
+                                        <option value="physique">Physique</option>
+                                        <option value="chimie">Chimie</option>
+                                        <option value="biologie">Biologie</option>
+                                        <option value="mathematiques">Mathématiques</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Numéro MTN MoMo</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="+229 XX XX XX XX">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Numéro Moov Money</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="+229 XX XX XX XX">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Numéro Celtiis</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="+229 XX XX XX XX">
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end">
+                                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                    Enregistrer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Section -->
+                <div id="reports" class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Rapports et statistiques</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Filtrer les rapports</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Département</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Tous les départements</option>
+                                        <option value="informatique">Informatique</option>
+                                        <option value="physique">Physique</option>
+                                        <option value="chimie">Chimie</option>
+                                        <option value="biologie">Biologie</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Matière</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Toutes les matières</option>
+                                        <option value="programmation">Programmation</option>
+                                        <option value="optique">Optique Physique</option>
+                                        <option value="chimie-org">Chimie Organique</option>
+                                        <option value="biologie-cell">Biologie Cellulaire</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Période</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="semestre">Ce semestre</option>
+                                        <option value="mois">Ce mois</option>
+                                        <option value="semaine">Cette semaine</option>
+                                        <option value="custom">Personnalisée</option>
+                                    </select>
+                                </div>
+                                
+                                <button class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                    Générer le rapport
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Statistiques des paiements</h3>
+                            <div class="chart-container">
+                                <div class="flex items-center justify-center h-full">
+                                    <div class="text-center">
+                                        <div class="h-40 w-40 mx-auto mb-4 relative">
+                                            <!-- Simple pie chart representation -->
+                                            <div class="absolute inset-0 bg-blue-100 rounded-full"></div>
+                                            <div class="absolute inset-0 bg-blue-600 rounded-full" style="clip-path: polygon(50% 50%, 50% 0, 0 0, 0 50%)"></div>
+                                            <div class="absolute inset-0 bg-green-600 rounded-full" style="clip-path: polygon(50% 50%, 100% 0, 100% 50%, 50% 50%)"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-lg font-bold">87%</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-center space-x-4">
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-blue-600 rounded-full mr-2"></div>
+                                                <span class="text-sm">MTN MoMo (52%)</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div class="w-3 h-3 bg-green-600 rounded-full mr-2"></div>
+                                                <span class="text-sm">Moov Money (35%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div id="results" class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Résultats des TP</h2>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <input type="text" placeholder="Rechercher un TP..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <button class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                    <i class="fas fa-filter mr-2"></i>Filtrer
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TP</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enseignant</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participants</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">TP d'Optique Physique</div>
+                                            <div class="text-sm text-gray-500">Licence 2 - Physique</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dr. Koffi Mensah</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">22/10/2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">24 étudiants</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i class="fas fa-eye mr-1"></i> Voir
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900">
+                                                <i class="fas fa-download mr-1"></i> PDF
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">TP de Chimie Organique</div>
+                                            <div class="text-sm text-gray-500">Licence 3 - Chimie</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dr. Adjoa N'dri</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/10/2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">18 étudiants</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i class="fas fa-eye mr-1"></i> Voir
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900">
+                                                <i class="fas fa-download mr-1"></i> PDF
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">TP de Programmation Java</div>
+                                            <div class="text-sm text-gray-500">Master 1 - Informatique</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Prof. Yao Kouassi</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">05/10/2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12 étudiants</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i class="fas fa-eye mr-1"></i> Voir
+                                            </button>
+                                            <button class="text-green-600 hover:text-green-900">
+                                                <i class="fas fa-download mr-1"></i> PDF
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Teacher Creation Modal -->
+    <div id="teacher-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Créer un compte enseignant</h3>
+                <button onclick="closeTeacherModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Nom et prénom">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="email@edu.uac.bj">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Département</label>
+                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Sélectionnez un département</option>
+                        <option value="informatique">Informatique</option>
+                        <option value="physique">Physique</option>
+                        <option value="chimie">Chimie</option>
+                        <option value="biologie">Biologie</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe temporaire</label>
+                    <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="********">
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeTeacherModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                        Créer le compte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+        
+        // Tab switching for teacher management
+        const tabs = document.querySelectorAll('.border-b-2');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('border-blue-500', 'text-blue-600'));
+                tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-600'));
+                this.classList.add('border-blue-500', 'text-blue-600');
+                this.classList.remove('border-transparent', 'text-gray-600');
+            });
+        });
+        
+        // Teacher modal functions
+        function openTeacherModal() {
+            document.getElementById('teacher-modal').classList.remove('hidden');
+        }
+        
+        function closeTeacherModal() {
+            document.getElementById('teacher-modal').classList.add('hidden');
+        }
+        
+        // Teacher activation/deactivation
+        const activateButtons = document.querySelectorAll('button:contains("Activer")');
+        activateButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Enseignant activé avec succès!');
+            });
+        });
+        
+        const deactivateButtons = document.querySelectorAll('button:contains("Désactiver")');
+        deactivateButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Enseignant désactivé avec succès!');
+            });
+        });
+        
+        // Student activation/deactivation
+        const studentActivateButtons = document.querySelectorAll('button:contains("Activer")');
+        studentActivateButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Étudiant activé avec succès!');
+            });
+        });
+        
+        const studentDeactivateButtons = document.querySelectorAll('button:contains("Désactiver")');
+        studentDeactivateButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Étudiant désactivé avec succès!');
+            });
+        });
+        
+        // Payment configuration save
+        const saveButton = document.querySelector('button:contains("Enregistrer")');
+        saveButton.addEventListener('click', function() {
+            alert('Configuration des paiements enregistrée!');
+        });
+        
+        // PDF download
+        const pdfButtons = document.querySelectorAll('button:contains("PDF")');
+        pdfButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Téléchargement du PDF des résultats...');
+            });
+        });
+    </script>
+</body>
+</html>

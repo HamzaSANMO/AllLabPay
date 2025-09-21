@@ -1,0 +1,194 @@
+<div class="create-tp-container">
+  <div class="header">
+    <h2>Créer un nouveau TP</h2>
+    <p>Remplissez le formulaire ci-dessous pour créer un nouveau TP</p>
+  </div>
+
+  <form [formGroup]="tpForm" (ngSubmit)="onSubmit()" class="tp-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="titre">Titre du TP *</label>
+        <input 
+          type="text" 
+          id="titre" 
+          formControlName="titre" 
+          placeholder="Ex: Programmation orientée objet"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('titre')?.invalid && tpForm.get('titre')?.touched">
+          Le titre est requis
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="matiereId">Matière *</label>
+        <select id="matiereId" formControlName="matiereId" class="form-control">
+          <option value="">Sélectionner une matière</option>
+          <option *ngFor="let matiere of matieres" [value]="matiere.id">
+            {{ matiere.nom }} ({{ matiere.filiere }} - {{ matiere.niveau }})
+          </option>
+        </select>
+        <div class="error-message" *ngIf="tpForm.get('matiereId')?.invalid && tpForm.get('matiereId')?.touched">
+          La matière est requise
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description *</label>
+      <textarea 
+        id="description" 
+        formControlName="description" 
+        rows="4"
+        placeholder="Décrivez le contenu et les objectifs du TP"
+        class="form-control"
+      ></textarea>
+      <div class="error-message" *ngIf="tpForm.get('description')?.invalid && tpForm.get('description')?.touched">
+        La description est requise
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="prix">Prix (FCFA) *</label>
+        <input 
+          type="number" 
+          id="prix" 
+          formControlName="prix" 
+          min="0"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('prix')?.invalid && tpForm.get('prix')?.touched">
+          Le prix doit être positif
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="capacite">Capacité maximale *</label>
+        <input 
+          type="number" 
+          id="capacite" 
+          formControlName="capacite" 
+          min="1"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('capacite')?.invalid && tpForm.get('capacite')?.touched">
+          La capacité doit être au moins 1
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dateDebut">Date de début *</label>
+        <input 
+          type="date" 
+          id="dateDebut" 
+          formControlName="dateDebut" 
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('dateDebut')?.invalid && tpForm.get('dateDebut')?.touched">
+          La date de début est requise
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="dateFin">Date de fin *</label>
+        <input 
+          type="date" 
+          id="dateFin" 
+          formControlName="dateFin" 
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('dateFin')?.invalid && tpForm.get('dateFin')?.touched">
+          La date de fin est requise
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dueDate">Date limite d'inscription *</label>
+        <input 
+          type="date" 
+          id="dueDate" 
+          formControlName="dueDate" 
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('dueDate')?.invalid && tpForm.get('dueDate')?.touched">
+          La date limite est requise
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="maxPoints">Points maximaux *</label>
+        <input 
+          type="number" 
+          id="maxPoints" 
+          formControlName="maxPoints" 
+          min="0"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="tpForm.get('maxPoints')?.invalid && tpForm.get('maxPoints')?.touched">
+          Les points doivent être positifs
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="registrationFee">Frais d'inscription (FCFA) *</label>
+      <input 
+        type="number" 
+        id="registrationFee" 
+        formControlName="registrationFee" 
+        min="0"
+        class="form-control"
+      >
+      <div class="error-message" *ngIf="tpForm.get('registrationFee')?.invalid && tpForm.get('registrationFee')?.touched">
+        Les frais d'inscription doivent être positifs
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="requirements">Prérequis</label>
+      <textarea 
+        id="requirements" 
+        formControlName="requirements" 
+        rows="3"
+        placeholder="Listez les prérequis pour ce TP"
+        class="form-control"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="materials">Matériaux nécessaires</label>
+      <input 
+        type="text" 
+        id="materials" 
+        formControlName="materials" 
+        placeholder="Ordinateur, logiciel, etc. (séparés par des virgules)"
+        class="form-control"
+      >
+      <small class="form-help">Séparez les matériaux par des virgules</small>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="button" 
+        (click)="onCancel()" 
+        class="btn btn-secondary"
+        [disabled]="isLoading"
+      >
+        Annuler
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="tpForm.invalid || isLoading"
+      >
+        <span *ngIf="isLoading">Création en cours...</span>
+        <span *ngIf="!isLoading">Créer le TP</span>
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,224 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- En-tête du tableau de bord -->
+  <div class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Tableau de bord Enseignant</h1>
+          <p class="mt-2 text-gray-600">Bienvenue, {{ userName }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm text-gray-500">Département</p>
+          <p class="text-lg font-semibold text-gray-900">{{ userDepartement }}</p>
+          <p class="text-sm text-gray-500">Grade</p>
+          <p class="text-lg font-semibold text-gray-900">{{ userGrade }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Cartes d'action rapide -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <!-- Carte TP -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Mes TP</dt>
+                <dd class="text-lg font-medium text-gray-900">Gérer vos TP</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <button (click)="navigateToTPs()" class="font-medium text-blue-600 hover:text-blue-500">
+              Voir mes TP
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Créer TP -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Créer TP</dt>
+                <dd class="text-lg font-medium text-gray-900">Nouveau TP</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <button (click)="createNewTP()" class="font-medium text-green-600 hover:text-green-500">
+              Créer un TP
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Étudiants -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-purple-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Étudiants</dt>
+                <dd class="text-lg font-medium text-gray-900">Gérer les étudiants</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <button (click)="navigateToStudents()" class="font-medium text-purple-600 hover:text-purple-500">
+              Voir les étudiants
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Paiements -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Paiements</dt>
+                <dd class="text-lg font-medium text-gray-900">Suivi des paiements</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <button (click)="navigateToPayments()" class="font-medium text-yellow-600 hover:text-yellow-500">
+              Voir les paiements
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section des statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Statistique TP -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total TP</dt>
+                <dd class="text-2xl font-bold text-gray-900">0</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistique Étudiants -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Étudiants</dt>
+                <dd class="text-2xl font-bold text-gray-900">0</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistique Paiements -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Paiements en attente</dt>
+                <dd class="text-2xl font-bold text-gray-900">0</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section des TP récents -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+          TP Récents
+        </h3>
+        <div class="text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun TP créé</h3>
+          <p class="mt-1 text-sm text-gray-500">Commencez par créer votre premier TP.</p>
+          <div class="mt-6">
+            <button (click)="createNewTP()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+              Créer un TP
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="p-4">
+  <h1 class="text-2xl font-bold mb-4">Travaux Pratiques</h1>
+  
+  <!-- Filtres -->
+  <div class="mb-4 flex gap-4">
+    <select [(ngModel)]="filiere" (change)="onFilterChange()" class="p-2 border rounded">
+      <option value="">Toutes les filières</option>
+      <option value="SVT">SVT</option>
+      <option value="PC">PC</option>
+      <option value="MIA">MIA</option>
+    </select>
+    <select [(ngModel)]="niveau" (change)="onFilterChange()" class="p-2 border rounded">
+      <option value="">Tous les niveaux</option>
+      <option value="L1">L1</option>
+      <option value="L2">L2</option>
+      <option value="L3">L3</option>
+    </select>
+  </div>
+
+  <!-- Liste des TP -->
+  <div class="space-y-4">
+    <div *ngFor="let tp of tps" class="bg-white p-4 rounded shadow">
+      <h3 class="text-lg font-semibold">{{ tp.titre }}</h3>
+      <p class="text-gray-600">{{ tp.matiere.nom }}</p>
+      <p class="text-gray-600">{{ tp.matiere.filiere.nom }} - {{ tp.matiere.niveau.code }}</p>
+      <p class="text-green-600 font-bold">{{ tp.prix }} XOF</p>
+      <p class="text-sm text-gray-500">Capacité: {{ tp.capacite }} étudiants</p>
+      <p class="text-sm text-gray-500">Du {{ tp.dateDebut | date }} au {{ tp.dateFin | date }}</p>
+      <p class="text-sm" [ngClass]="{
+        'text-yellow-600': tp.status === 'DRAFT',
+        'text-green-600': tp.status === 'PUBLISHED',
+        'text-red-600': tp.status === 'CLOSED'
+      }">{{ tp.status }}</p>
+      
+      <button *ngIf="authService.getRole() === 'STUDENT' && tp.status === 'PUBLISHED'" 
+              (click)="register(tp.id)" 
+              class="bg-blue-500 text-white p-2 rounded mt-2">
+        S'inscrire
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination infinie -->
+  <div *ngIf="loading" class="text-center py-4">
+    <p>Chargement...</p>
+  </div>
+</div>

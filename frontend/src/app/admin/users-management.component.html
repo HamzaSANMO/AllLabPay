@@ -1,0 +1,22 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Gestion des Utilisateurs</h2>
+  <form [formGroup]="teacherForm" (ngSubmit)="createTeacher()" class="mb-4">
+    <input formControlName="email" placeholder="Email" class="p-2 border rounded w-full mb-2">
+    <input formControlName="password" type="password" placeholder="Mot de passe" class="p-2 border rounded w-full mb-2">
+    <input formControlName="departement" placeholder="Département" class="p-2 border rounded w-full mb-2">
+    <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Créer Enseignant</button>
+  </form>
+  <div class="space-y-4">
+    <div *ngFor="let user of users" class="bg-white p-4 rounded shadow flex justify-between">
+      <div>
+        <p>Email: {{ user.email }}</p>
+        <p>Rôle: {{ user.role }}</p>
+        <p>Actif: {{ user.isActive ? 'Oui' : 'Non' }}</p>
+      </div>
+      <button (click)="toggleUserActive(user.id, !user.isActive)" 
+              class="bg-yellow-500 text-white p-2 rounded">
+        {{ user.isActive ? 'Désactiver' : 'Activer' }}
+      </button>
+    </div>
+  </div>
+</div>

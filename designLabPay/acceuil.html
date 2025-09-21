@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabPay - FAST UAC</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #3B82F6;
+            --secondary: #2563EB;
+            --accent: #60A5FA;
+            --light: #F3F4F6;
+            --dark: #1F2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+        }
+        
+        .login-card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .student-illustration {
+            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .student-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 h-10 w-10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-flask text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-blue-600">LabPay</span>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium">Fonctionnalités</a>
+                <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium">À propos</a>
+                <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <a href="#login" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                    Connexion
+                </a>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden bg-white border-t md:hidden">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium py-2">Fonctionnalités</a>
+                <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium py-2">À propos</a>
+                <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium py-2">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-16 md:py-24">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Plateforme de paiement des TP pour la FAST-UAC</h1>
+                    <p class="text-xl mb-8 opacity-90">Payez facilement vos travaux pratiques, consultez vos notes et gérez vos activités de laboratoire en un seul endroit.</p>
+                    <div class="flex space-x-4">
+                        <a href="#login" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition">
+                            Commencer maintenant
+                        </a>
+                        <a href="#features" class="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition">
+                            En savoir plus
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <div class="absolute -inset-8 bg-blue-400 rounded-2xl rotate-6 opacity-20"></div>
+                        <div class="relative bg-white rounded-2xl p-6 shadow-xl">
+                            <div class="flex space-x-4 mb-6">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-vial text-blue-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">TP de Chimie Organique</h3>
+                                    <p class="text-sm text-gray-600">15 Oct 2023 - Salle Lab-CH-102</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-2xl font-bold text-gray-800">5 000 FCFA</span>
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">À payer</span>
+                            </div>
+                            <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                                Payer maintenant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Fonctionnalités principales</h2>
+            <p class="text-lg text-center text-gray-600 max-w-2xl mx-auto mb-12">Découvrez comment LabPay simplifie la gestion des travaux pratiques pour tous les utilisateurs</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Student Feature -->
+                <div class="bg-gray-50 p-6 rounded-2xl card-hover">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-user-graduate text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Espace Étudiant</h3>
+                    <p class="text-gray-600 mb-4">Gérez vos paiements de TP, consultez vos notes et téléchargez vos reçus en quelques clics.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span>Paiement sécurisé des TP</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span>Consultation des notes</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span>Téléchargement des reçus PDF</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Teacher Feature -->
+                <div class="bg-gray-50 p-6 rounded-2xl card-hover">
+                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chalkboard-teacher text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Espace Enseignant</h3>
+                    <p class="text-gray-600 mb-4">Créez et gérez vos TP, suivez les paiements et saisissez les notes des étudiants.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span>Création de TP</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span>Suivi des paiements</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span>Saisie des notes</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Illustrations Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Rejoignez nos étudiants satisfaits</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-2xl card-hover">
+                    <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Étudiante en laboratoire" class="student-image mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user-graduate text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">Marie K.</h3>
+                            <p class="text-blue-600">Étudiante en Licence de Physique</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"LabPay a simplifié tous mes paiements de TP. Je peux maintenant me concentrer sur mes études sans me soucier des démarches administratives."</p>
+                    <div class="flex">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl card-hover">
+                    <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Étudiant en chimie" class="student-image mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user-graduate text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">Thomas D.</h3>
+                            <p class="text-blue-600">Étudiant en Master de Chimie</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"La consultation des notes et le téléchargement des reçus sont si faciles maintenant. LabPay a vraiment modernisé notre faculté."</p>
+                    <div class="flex">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section id="login" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Connectez-vous à votre espace</h2>
+            <p class="text-lg text-center text-gray-600 max-w-2xl mx-auto mb-12">Accédez à votre tableau de bord en utilisant vos identifiants</p>
+            
+            <div class="max-w-md mx-auto bg-white login-card rounded-2xl overflow-hidden">
+                <div class="p-6">
+                    <form class="space-y-4">
+                        <div>
+                            <label for="login" class="block text-sm font-medium text-gray-700 mb-1">Email ou Matricule</label>
+                            <input type="text" id="login" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="email@domaine.com ou matricule">
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                            <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Votre mot de passe">
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="remember" class="ml-2 block text-sm text-gray-700">Se souvenir de moi</label>
+                            </div>
+                            
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Mot de passe oublié?</a>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700">
+                            Se connecter
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-600">Vous n'avez pas de compte? <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Contactez l'administration</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 gradient-bg text-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <p class="text-4xl font-bold mb-2">1,500+</p>
+                    <p class="text-lg opacity-90">Étudiants actifs</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold mb-2">200+</p>
+                    <p class="text-lg opacity-90">Enseignants</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold mb-2">5,000+</p>
+                    <p class="text-lg opacity-90">TP payés</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold mb-2">100%</p>
+                    <p class="text-lg opacity-90">Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="bg-blue-600 h-8 w-8 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-flask text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">LabPay</span>
+                    </div>
+                    <p class="text-gray-400">Plateforme de gestion des travaux pratiques pour la Faculté des Sciences et Techniques de l'UAC.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Accueil</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white">Fonctionnalités</a></li>
+                        <li><a href="#login" class="text-gray-400 hover:text-white">Connexion</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white">À propos</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Centre d'aide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div id="contact">
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-blue-500"></i>
+                            <span class="text-gray-400">FAST-UAC, Campus d'Abomey-Calavi</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-blue-500"></i>
+                            <span class="text-gray-400">+229 XX XX XX XX</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                            <span class="text-gray-400">support@labpay.uac.bj</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">© 2023 LabPay - FAST UAC. Tous droits réservés.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+        
+        // Simple form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const loginValue = document.getElementById('login').value;
+            const passwordValue = document.getElementById('password').value;
+            
+            if (!loginValue || !passwordValue) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+            
+            // In a real application, this would be an API call
+            alert('Connexion en cours...');
+            // Redirection would happen based on user role after authentication
+        });
+    </script>
+</body>
+</html>

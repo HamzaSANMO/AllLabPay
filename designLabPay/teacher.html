@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Enseignant - LabPay</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #3B82F6;
+            --secondary: #2563EB;
+            --accent: #60A5FA;
+            --light: #F3F4F6;
+            --dark: #1F2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                transition: left 0.3s ease;
+                z-index: 40;
+                height: 100vh;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 30;
+            }
+            
+            .overlay.open {
+                display: block;
+            }
+        }
+        
+        .active-tab {
+            border-bottom: 3px solid #3B82F6;
+            color: #2563EB;
+            font-weight: 600;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-planned {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-in-progress {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .status-completed {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-canceled {
+            background-color: #FEE2E2;
+            color: #B91C1C;
+        }
+        
+        .student-present {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .student-absent {
+            background-color: #FEE2E2;
+            color: #B91C1C;
+        }
+        
+        .student-pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white shadow-md">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 h-10 w-10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-flask text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-blue-600">LabPay</span>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-chalkboard-teacher text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Prof. Martin</h3>
+                        <p class="text-sm text-gray-600">Département de Physique</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#dashboard" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                    <a href="#create-tp" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-plus-circle w-5"></i>
+                        <span>Créer un TP</span>
+                    </a>
+                    <a href="#my-tps" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-vial w-5"></i>
+                        <span>Mes TP</span>
+                    </a>
+                    <a href="#students" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-user-graduate w-5"></i>
+                        <span>Gestion étudiants</span>
+                    </a>
+                    <a href="#grades" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Saisie des notes</span>
+                    </a>
+                    <a href="#profile" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-user w-5"></i>
+                        <span>Mon profil</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="md:hidden text-gray-700 mr-4">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-800">Tableau de bord Enseignant</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-600">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">2</span>
+                    </button>
+                    <div class="hidden md:block">
+                        <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="p-6">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">TP planifiés</h3>
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-blue-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">7</p>
+                        <p class="text-sm text-gray-600 mt-2">Pour ce semestre</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Étudiants</h3>
+                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user-graduate text-green-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">142</p>
+                        <p class="text-sm text-gray-600 mt-2">Dans mes groupes</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Paiements</h3>
+                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-money-bill-wave text-purple-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">85%</p>
+                        <p class="text-sm text-gray-600 mt-2">Taux de paiement</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Notes à saisir</h3>
+                            <div class="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tasks text-yellow-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">3</p>
+                        <p class="text-sm text-gray-600 mt-2">TPs évalués</p>
+                    </div>
+                </div>
+                
+                <!-- Create TP Form -->
+                <div id="create-tp" class="mb-8 bg-white rounded-xl shadow overflow-hidden">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <h2 class="text-xl font-bold text-gray-800">Créer un nouveau TP</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="tp-title" class="block text-sm font-medium text-gray-700 mb-1">Titre du TP</label>
+                                <input type="text" id="tp-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: TP d'Optique Physique">
+                            </div>
+                            
+                            <div>
+                                <label for="tp-subject" class="block text-sm font-medium text-gray-700 mb-1">Matière</label>
+                                <select id="tp-subject" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionnez une matière</option>
+                                    <option value="physique">Physique</option>
+                                    <option value="chimie">Chimie</option>
+                                    <option value="biologie">Biologie</option>
+                                    <option value="informatique">Informatique</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="tp-filiere" class="block text-sm font-medium text-gray-700 mb-1">Filière</label>
+                                <select id="tp-filiere" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionnez une filière</option>
+                                    <option value="informatique">Informatique</option>
+                                    <option value="physique">Physique</option>
+                                    <option value="chimie">Chimie</option>
+                                    <option value="biologie">Biologie</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="tp-niveau" class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+                                <select id="tp-niveau" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionnez un niveau</option>
+                                    <option value="licence1">Licence 1</option>
+                                    <option value="licence2">Licence 2</option>
+                                    <option value="licence3">Licence 3</option>
+                                    <option value="master1">Master 1</option>
+                                    <option value="master2">Master 2</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="tp-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                                <input type="date" id="tp-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="tp-salle" class="block text-sm font-medium text-gray-700 mb-1">Salle</label>
+                                <input type="text" id="tp-salle" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: Lab-PH-201">
+                            </div>
+                            
+                            <div>
+                                <label for="tp-horaire" class="block text-sm font-medium text-gray-700 mb-1">Horaire</label>
+                                <input type="time" id="tp-horaire" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="tp-capacite" class="block text-sm font-medium text-gray-700 mb-1">Nombre d'étudiants par groupe</label>
+                                <input type="number" id="tp-capacite" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: 24">
+                            </div>
+                            
+                            <div>
+                                <label for="tp-prix" class="block text-sm font-medium text-gray-700 mb-1">Prix (FCFA)</label>
+                                <input type="number" id="tp-prix" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: 5000">
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label for="tp-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea id="tp-description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Description détaillée du TP..."></textarea>
+                            </div>
+                            
+                            <div class="md:col-span-2 flex justify-end">
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                    Créer le TP
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- TP List Section -->
+                <div id="my-tps" class="mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Mes Travaux Pratiques</h2>
+                        <div class="flex space-x-2">
+                            <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                <i class="fas fa-filter mr-2"></i>Filtrer
+                            </button>
+                            <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                <i class="fas fa-sort mr-2"></i>Trier
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="border-b border-gray-200">
+                            <div class="flex overflow-x-auto">
+                                <button class="px-6 py-3 border-b-2 border-blue-500 text-blue-600 font-medium active-tab">
+                                    Tous les TP
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Planifiés
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    En cours
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Terminés
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="divide-y divide-gray-200">
+                            <!-- TP Item 1 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP d'Optique Physique</h4>
+                                    <p class="text-sm text-gray-600">22/10/2023 - 10h00 - Salle Lab-PH-201</p>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        <span class="status-badge status-planned">Planifié</span>
+                                        <span class="text-sm text-gray-600">Licence 2 Physique - 24 étudiants</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                        <i class="fas fa-eye mr-2"></i>Voir
+                                    </button>
+                                    <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition">
+                                        <i class="fas fa-edit mr-2"></i>Modifier
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- TP Item 2 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP de Mécanique des Fluides</h4>
+                                    <p class="text-sm text-gray-600">15/10/2023 - 14h00 - Salle Lab-PH-103</p>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        <span class="status-badge status-in-progress">En cours</span>
+                                        <span class="text-sm text-gray-600">Licence 3 Physique - 18 étudiants</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                        <i class="fas fa-eye mr-2"></i>Voir
+                                    </button>
+                                    <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 transition">
+                                        <i class="fas fa-edit mr-2"></i>Modifier
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- TP Item 3 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP d'Électromagnétisme</h4>
+                                    <p class="text-sm text-gray-600">05/10/2023 - 09h00 - Salle Lab-PH-202</p>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        <span class="status-badge status-completed">Terminé</span>
+                                        <span class="text-sm text-gray-600">Master 1 Physique - 12 étudiants</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                        <i class="fas fa-eye mr-2"></i>Voir
+                                    </button>
+                                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
+                                        <i class="fas fa-chart-line mr-2"></i>Noter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student Management Section -->
+                <div id="students" class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Gestion des étudiants - TP d'Optique Physique</h2>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <div>
+                                <span class="text-sm text-gray-600">24 étudiants inscrits</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                    <i class="fas fa-file-export mr-2"></i>Exporter
+                                </button>
+                                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                    <i class="fas fa-plus mr-2"></i>Ajouter
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matricule</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paiement</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Présence</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M001</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dupont Jean</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-completed">Payé</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge student-pending">En attente</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M002</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Martin Léa</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-completed">Payé</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge student-present">Présent</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M003</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Petit Thomas</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-planned">En attente</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge student-pending">En attente</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grades Section -->
+                <div id="grades" class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Saisie des notes - TP d'Électromagnétisme</h2>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <div>
+                                <span class="text-sm text-gray-600">12 étudiants à noter</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                    <i class="fas fa-file-export mr-2"></i>Exporter
+                                </button>
+                                <button class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">
+                                    <i class="fas fa-save mr-2"></i>Enregistrer
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matricule</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note (/20)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarques</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M001</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dupont Jean</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <input type="number" step="0.5" min="0" max="20" class="w-20 px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="16.5">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <input type="text" class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Remarques...">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M002</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Martin Léa</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <input type="number" step="0.5" min="0" max="20" class="w-20 px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="14.0">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <input type="text" class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Remarques...">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">19M003</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Petit Thomas</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <input type="number" step="0.5" min="0" max="20" class="w-20 px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="18.0">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <input type="text" class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Remarques...">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="px-6 py-4 bg-gray-50 flex justify-end">
+                            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                Générer les résultats PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+        
+        // Tab switching for TP categories
+        const tabs = document.querySelectorAll('.border-b-2');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('border-blue-500', 'text-blue-600'));
+                tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-600'));
+                this.classList.add('border-blue-500', 'text-blue-600');
+                this.classList.remove('border-transparent', 'text-gray-600');
+            });
+        });
+        
+        // Form submission for creating TP
+        const createTpForm = document.querySelector('form');
+        createTpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('TP créé avec succès!');
+        });
+    </script>
+</body>
+</html>

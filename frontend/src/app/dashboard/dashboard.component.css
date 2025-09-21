@@ -1,0 +1,20 @@
+/* Styles pour le composant dashboard */
+.loading-container {
+  @apply min-h-screen bg-gray-50 flex items-center justify-center;
+}
+
+.loading-content {
+  @apply text-center;
+}
+
+.loading-spinner {
+  @apply animate-spin rounded-full h-32 w-32 border-b-2 border-green-600 mx-auto;
+}
+
+.loading-title {
+  @apply mt-4 text-xl font-semibold text-gray-700;
+}
+
+.loading-description {
+  @apply mt-2 text-gray-500;
+}

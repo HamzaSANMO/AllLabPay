@@ -1,0 +1,85 @@
+<nav class="bg-white shadow-lg border-b border-green-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <!-- Logo et titre -->
+      <div class="flex items-center">
+        <div class="flex-shrink-0 flex items-center">
+          <div class="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center mr-3">
+            <span class="text-white font-bold text-xl">F</span>
+          </div>
+          <span class="text-xl font-bold text-gray-900">FAST UAC</span>
+        </div>
+      </div>
+
+      <!-- Navigation centrale -->
+      <div class="hidden md:flex items-center space-x-8" *ngIf="isAuthenticated">
+        <!-- Navigation pour les étudiants -->
+        <ng-container *ngIf="isStudent">
+          <a routerLink="/student/dashboard" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Tableau de bord
+          </a>
+          <a routerLink="/student/tps" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Travaux Pratiques
+          </a>
+          <a routerLink="/student/payments" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Paiements
+          </a>
+        </ng-container>
+
+        <!-- Navigation pour les enseignants -->
+        <ng-container *ngIf="isTeacher">
+          <a routerLink="/teacher/dashboard" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Tableau de bord
+          </a>
+          <a routerLink="/teacher/tps" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Mes TP
+          </a>
+          <a routerLink="/teacher/students" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Étudiants
+          </a>
+        </ng-container>
+
+        <!-- Navigation pour les administrateurs -->
+        <ng-container *ngIf="isAdmin">
+          <a routerLink="/admin/dashboard" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Tableau de bord
+          </a>
+          <a routerLink="/admin/users" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Utilisateurs
+          </a>
+          <a routerLink="/admin/tps" class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Gestion TP
+          </a>
+        </ng-container>
+      </div>
+
+      <!-- Menu utilisateur -->
+      <div class="flex items-center space-x-4" *ngIf="isAuthenticated">
+        <div class="relative">
+          <button class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+              <span class="text-white font-medium text-sm">
+                {{ getCurrentUserInitials() }}
+              </span>
+            </div>
+            <span class="ml-2 text-gray-700 font-medium">{{ userName }}</span>
+            <span class="ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{{ userRole }}</span>
+            <svg class="ml-1 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <button
+          (click)="logout()"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

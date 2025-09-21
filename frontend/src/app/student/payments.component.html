@@ -1,0 +1,31 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Mes Paiements</h2>
+  <div class="mb-4">
+    <h3 class="font-bold">Inscriptions en attente de paiement</h3>
+    <div *ngFor="let reg of registrations" class="bg-white p-4 rounded shadow mb-2">
+      <p>TP: {{ reg.tp.titre }}</p>
+      <p>Montant: {{ reg.tp.prix }} XOF</p>
+      <select #provider class="p-2 border rounded w-full mb-2">
+        <option value="MTN">MTN Mobile Money</option>
+        <option value="MOOV">Moov Money</option>
+        <option value="CELTIIS">Celtiis Money</option>
+      </select>
+      <button (click)="initiatePayment(reg.id, provider.value)" class="bg-blue-500 text-white p-2 rounded w-full">
+        Payer
+      </button>
+    </div>
+  </div>
+  <div>
+    <h3 class="font-bold">Historique des paiements</h3>
+    <div *ngFor="let payment of payments" class="bg-white p-4 rounded shadow mb-2">
+      <p>TP: {{ payment.registration.tp.titre }}</p>
+      <p>Montant: {{ payment.amount }} XOF</p>
+      <p>Provider: {{ payment.provider }}</p>
+      <p>Statut: {{ payment.status }}</p>
+      <button *ngIf="payment.status === 'PAID'" (click)="downloadReceipt(payment.id)" 
+              class="bg-green-500 text-white p-2 rounded">
+        Télécharger Reçu
+      </button>
+    </div>
+  </div>
+</div>

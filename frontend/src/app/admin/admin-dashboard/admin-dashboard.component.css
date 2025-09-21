@@ -1,0 +1,181 @@
+/* Styles pour le tableau de bord administrateur */
+.dashboard-header {
+  @apply bg-white shadow;
+}
+
+.dashboard-title {
+  @apply text-3xl font-bold text-gray-900;
+}
+
+.dashboard-subtitle {
+  @apply mt-2 text-gray-600;
+}
+
+.user-info {
+  @apply text-right;
+}
+
+.user-info-label {
+  @apply text-sm text-gray-500;
+}
+
+.user-info-value {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.action-card {
+  @apply bg-white overflow-hidden shadow rounded-lg;
+}
+
+.action-card-content {
+  @apply p-5;
+}
+
+.action-card-icon {
+  @apply flex-shrink-0;
+}
+
+.action-card-icon-bg {
+  @apply w-8 h-8 rounded-md flex items-center justify-center;
+}
+
+.action-card-body {
+  @apply ml-5 w-0 flex-1;
+}
+
+.action-card-title {
+  @apply text-sm font-medium text-gray-500 truncate;
+}
+
+.action-card-description {
+  @apply text-lg font-medium text-gray-900;
+}
+
+.action-card-footer {
+  @apply bg-gray-50 px-5 py-3;
+}
+
+.action-card-link {
+  @apply font-medium hover:opacity-80 transition-opacity duration-200;
+}
+
+.action-card-link.blue {
+  @apply text-blue-600 hover:text-blue-500;
+}
+
+.action-card-link.green {
+  @apply text-green-600 hover:text-green-500;
+}
+
+.action-card-link.purple {
+  @apply text-purple-600 hover:text-purple-500;
+}
+
+.data-card {
+  @apply bg-white overflow-hidden shadow rounded-lg;
+}
+
+.data-card-content {
+  @apply p-5;
+}
+
+.data-card-icon {
+  @apply flex-shrink-0;
+}
+
+.data-card-icon-bg {
+  @apply w-8 h-8 rounded-md flex items-center justify-center;
+}
+
+.data-card-body {
+  @apply ml-5 w-0 flex-1;
+}
+
+.data-card-title {
+  @apply text-sm font-medium text-gray-500 truncate;
+}
+
+.data-card-description {
+  @apply text-lg font-medium text-gray-900;
+}
+
+.data-card-footer {
+  @apply bg-gray-50 px-5 py-3;
+}
+
+.data-card-link {
+  @apply font-medium hover:opacity-80 transition-opacity duration-200;
+}
+
+.data-card-link.indigo {
+  @apply text-indigo-600 hover:text-indigo-500;
+}
+
+.data-card-link.pink {
+  @apply text-pink-600 hover:text-pink-500;
+}
+
+.data-card-link.yellow {
+  @apply text-yellow-600 hover:text-yellow-500;
+}
+
+.data-card-link.red {
+  @apply text-red-600 hover:text-red-500;
+}
+
+.stat-card {
+  @apply bg-white overflow-hidden shadow rounded-lg;
+}
+
+.stat-card-content {
+  @apply p-5;
+}
+
+.stat-card-icon {
+  @apply flex-shrink-0;
+}
+
+.stat-card-icon-bg {
+  @apply w-8 h-8 rounded-md flex items-center justify-center;
+}
+
+.stat-card-body {
+  @apply ml-5 w-0 flex-1;
+}
+
+.stat-card-title {
+  @apply text-sm font-medium text-gray-500 truncate;
+}
+
+.stat-card-value {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard-header {
+    @apply px-4;
+  }
+  
+  .action-cards {
+    @apply grid-cols-1;
+  }
+  
+  .data-cards {
+    @apply grid-cols-1;
+  }
+  
+  .stat-cards {
+    @apply grid-cols-1;
+  }
+  
+  .user-info {
+    @apply text-left mt-4;
+  }
+}
+
+@media (max-width: 1024px) {
+  .data-cards {
+    @apply grid-cols-2;
+  }
+}

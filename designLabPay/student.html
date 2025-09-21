@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Étudiant - LabPay</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #3B82F6;
+            --secondary: #2563EB;
+            --accent: #60A5FA;
+            --light: #F3F4F6;
+            --dark: #1F2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                transition: left 0.3s ease;
+                z-index: 40;
+                height: 100vh;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 30;
+            }
+            
+            .overlay.open {
+                display: block;
+            }
+        }
+        
+        .active-tab {
+            border-bottom: 3px solid #3B82F6;
+            color: #2563EB;
+            font-weight: 600;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-paid {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .status-scheduled {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-completed {
+            background-color: #E5E7EB;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white shadow-md">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 h-10 w-10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-flask text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-blue-600">LabPay</span>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-graduate text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Jean Dupont</h3>
+                        <p class="text-sm text-gray-600">Licence 2 - Informatique</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#dashboard" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                    <a href="#tps" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-vial w-5"></i>
+                        <span>Mes TP</span>
+                    </a>
+                    <a href="#receipts" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-receipt w-5"></i>
+                        <span>Mes reçus</span>
+                    </a>
+                    <a href="#grades" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Mes notes</span>
+                    </a>
+                    <a href="#profile" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-user w-5"></i>
+                        <span>Mon profil</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="md:hidden text-gray-700 mr-4">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-800">Tableau de bord</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-600">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">3</span>
+                    </button>
+                    <div class="hidden md:block">
+                        <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="p-6">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">TP disponibles</h3>
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-vial text-blue-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">5</p>
+                        <p class="text-sm text-gray-600 mt-2">Dont 2 à payer</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">TP payés</h3>
+                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">3</p>
+                        <p class="text-sm text-gray-600 mt-2">Dont 1 effectué</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Solde</h3>
+                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-wallet text-purple-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">12 500 F</p>
+                        <p class="text-sm text-gray-600 mt-2">Pour 2 TP restants</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Moyenne</h3>
+                            <div class="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-yellow-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-800">15.5/20</p>
+                        <p class="text-sm text-gray-600 mt-2">Sur 5 TP notés</p>
+                    </div>
+                </div>
+                
+                <!-- TP List Section -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Mes Travaux Pratiques</h2>
+                        <div class="flex space-x-2">
+                            <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                <i class="fas fa-filter mr-2"></i>Filtrer
+                            </button>
+                            <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                <i class="fas fa-sort mr-2"></i>Trier
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="border-b border-gray-200">
+                            <div class="flex overflow-x-auto">
+                                <button class="px-6 py-3 border-b-2 border-blue-500 text-blue-600 font-medium active-tab">
+                                    Tous les TP
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Physique
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Chimie
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Biologie
+                                </button>
+                                <button class="px-6 py-3 border-b-2 border-transparent text-gray-600 hover:text-blue-600 font-medium">
+                                    Informatique
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="divide-y divide-gray-200">
+                            <!-- TP Item 1 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP de Chimie Organique</h4>
+                                    <p class="text-sm text-gray-600">Programmé le 15/10/2023 - Salle Lab-CH-102</p>
+                                    <div class="mt-2">
+                                        <span class="status-badge status-available">Disponible</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-lg font-bold text-gray-800">5 000 FCFA</span>
+                                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                        Payer maintenant
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- TP Item 2 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP d'Optique Physique</h4>
+                                    <p class="text-sm text-gray-600">Programmé le 22/10/2023 - Salle Lab-PH-201</p>
+                                    <div class="mt-2">
+                                        <span class="status-badge status-available">Disponible</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-lg font-bold text-gray-800">7 500 FCFA</span>
+                                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                                        Payer maintenant
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- TP Item 3 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP de Biologie Cellulaire</h4>
+                                    <p class="text-sm text-gray-600">Programmé le 05/11/2023 - Salle Lab-BIO-103</p>
+                                    <div class="mt-2">
+                                        <span class="status-badge status-paid">Payé</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-lg font-bold text-gray-800">6 000 FCFA</span>
+                                    <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium cursor-not-allowed" disabled>
+                                        Déjà payé
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- TP Item 4 -->
+                            <div class="p-6 flex flex-col md:flex-row md:items-center justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <h4 class="font-semibold text-gray-800">TP de Programmation Java</h4>
+                                    <p class="text-sm text-gray-600">Effectué le 12/09/2023 - Salle Info-B204</p>
+                                    <div class="mt-2">
+                                        <span class="status-badge status-completed">Terminé</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-lg font-bold text-gray-800">4 500 FCFA</span>
+                                    <button class="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium hover:bg-blue-200 transition">
+                                        Voir les notes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Grades Section -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Notes récentes</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">TP de Programmation Java</h3>
+                                <span class="text-sm text-gray-500">12/09/2023</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600">Note obtenue</p>
+                                    <p class="text-3xl font-bold text-gray-800">16.5/20</p>
+                                </div>
+                                <div class="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
+                                    <span class="text-xl font-bold text-green-600">B</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center justify-between text-sm text-gray-600">
+                                    <span>Moyenne de classe</span>
+                                    <span>14.2/20</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                    <div class="bg-green-600 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">TP de Circuits Électriques</h3>
+                                <span class="text-sm text-gray-500">28/08/2023</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600">Note obtenue</p>
+                                    <p class="text-3xl font-bold text-gray-800">14/20</p>
+                                </div>
+                                <div class="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span class="text-xl font-bold text-blue-600">C+</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center justify-between text-sm text-gray-600">
+                                    <span>Moyenne de classe</span>
+                                    <span>12.8/20</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Methods Section -->
+                <!-- <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Méthodes de paiement</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="border-2 border-gray-200 rounded-lg p-6 flex flex-col items-center hover:border-blue-500 transition card-hover">
+                            <img src="https://via.placeholder.com/120x60?text=MTN+MoMo" alt="MTN MoMo" class="h-12 mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">MTN MoMo</h3>
+                            <p class="text-sm text-gray-600 text-center">Paiement mobile via MTN Money</p>
+                            <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                                Configurer
+                            </button>
+                        </div>
+                        
+                        <div class="border-2 border-gray-200 rounded-lg p-6 flex flex-col items-center hover:border-blue-500 transition card-hover">
+                            <img src="https://via.placeholder.com/120x60?text=Moov+Money" alt="Moov Money" class="h-12 mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Moov Money</h3>
+                            <p class="text-sm text-gray-600 text-center">Paiement mobile via Moov Money</p>
+                            <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                                Configurer
+                            </button>
+                        </div>
+                        
+                        <div class="border-2 border-gray-200 rounded-lg p-6 flex flex-col items-center hover:border-blue-500 transition card-hover">
+                            <img src="https://via.placeholder.com/120x60?text=Celtiis" alt="Celtiis" class="h-12 mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Celtiis</h3>
+                            <p class="text-sm text-gray-600 text-center">Paiement mobile via Celtiis</p>
+                            <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                                Configurer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+        
+        // Tab switching for TP categories
+        const tabs = document.querySelectorAll('.border-b-2');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('border-blue-500', 'text-blue-600'));
+                tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-600'));
+                this.classList.add('border-blue-500', 'text-blue-600');
+                this.classList.remove('border-transparent', 'text-gray-600');
+            });
+        });
+        
+        // Simulate payment process
+        const payButtons = document.querySelectorAll('button:contains("Payer maintenant")');
+        payButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Redirection vers le processus de paiement...');
+            });
+        });
+    </script>
+</body>
+</html>

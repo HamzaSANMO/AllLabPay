@@ -1,0 +1,25 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Notes pour TP {{ tpId }}</h2>
+  <form [formGroup]="gradeForm" (ngSubmit)="onSubmit()" class="mb-4">
+    <select formControlName="studentId" class="p-2 border rounded w-full mb-2">
+      <!-- Lister étudiants inscrits (via registrationService.getTPRegistrations) -->
+    </select>
+    <input formControlName="note" type="number" placeholder="Note (0-20)" class="p-2 border rounded w-full mb-2">
+    <input formControlName="commentaire" placeholder="Commentaire" class="p-2 border rounded w-full mb-2">
+    <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Ajouter Note</button>
+  </form>
+  <div class="mb-4">
+    <p>Moyenne: {{ stats.average || 0 }}</p>
+    <p>Nombre de notes: {{ stats.count || 0 }}</p>
+    <!-- Chart via ng2-charts -->
+  </div>
+  <div class="space-y-4">
+    <div *ngFor="let grade of grades" class="bg-white p-4 rounded shadow">
+      <p>Étudiant: {{ grade.student.email }}</p>
+      <p>Note: {{ grade.note }}</p>
+      <p>Commentaire: {{ grade.commentaire }}</p>
+    </div>
+  </div>
+  <button (click)="downloadCSV()" class="bg-green-500 text-white p-2 rounded mr-2">Exporter CSV</button>
+  <button (click)="downloadPDF()" class="bg-green-500 text-white p-2 rounded">Exporter PDF</button>
+</div>

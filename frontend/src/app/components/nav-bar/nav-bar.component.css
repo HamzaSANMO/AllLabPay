@@ -1,0 +1,47 @@
+/* Styles pour la barre de navigation */
+.nav-link {
+  @apply text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200;
+}
+
+.nav-link.active {
+  @apply text-green-600 bg-green-50;
+}
+
+.user-menu {
+  @apply relative inline-block text-left;
+}
+
+.user-button {
+  @apply flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500;
+}
+
+.user-avatar {
+  @apply w-8 h-8 bg-green-600 rounded-full flex items-center justify-center;
+}
+
+.user-info {
+  @apply ml-2 text-gray-700 font-medium;
+}
+
+.user-role {
+  @apply ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded;
+}
+
+.logout-button {
+  @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .nav-links {
+    @apply hidden;
+  }
+  
+  .user-info {
+    @apply hidden;
+  }
+  
+  .user-role {
+    @apply hidden;
+  }
+}

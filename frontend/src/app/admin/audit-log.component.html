@@ -1,0 +1,14 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Journal d'Audit</h2>
+  <input [(ngModel)]="filter" (input)="onFilterChange()" placeholder="Filtrer par action/entité" 
+         class="p-2 border rounded w-full mb-4">
+  <div infiniteScroll (scrolled)="onScroll()" class="space-y-4">
+    <div *ngFor="let log of logs" class="bg-white p-4 rounded shadow">
+      <p>Acteur: {{ log.actorId }}</p>
+      <p>Action: {{ log.action }}</p>
+      <p>Entité: {{ log.entity }} (ID: {{ log.entityId }})</p>
+      <p>Payload: {{ log.payload | json }}</p>
+      <p>Date: {{ log.createdAt | date }}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+export interface Notification {
+  id: string;
+  type: 'success' | 'error' | 'info' | 'warning';
+  message: string;
+  title?: string;
+  duration?: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+  private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+  public notifications$ = this.notificationsSubject.asObservable();
+
+  showSuccess(message: string, title?: string, duration: number = 5000): void {
+    this.showNotification({
+      id: this.generateId(),
+      type: 'success',
+      message,
+      title,
+      duration
+    });
+  }
+
+  showError(message: string, title?: string, duration: number = 8000): void {
+    this.showNotification({
+      id: this.generateId(),
+      type: 'error',
+      message,
+      title,
+      duration
+    });
+  }
+
+  showInfo(message: string, title?: string, duration: number = 5000): void {
+    this.showNotification({
+      id: this.generateId(),
+      type: 'info',
+      message,
+      title,
+      duration
+    });
+  }
+
+  showWarning(message: string, title?: string, duration: number = 6000): void {
+    this.showNotification({
+      id: this.generateId(),
+      type: 'warning',
+      message,
+      title,
+      duration
+    });
+  }
+
+  removeNotification(id: string): void {
+    const currentNotifications = this.notificationsSubject.value;
+    const filteredNotifications = currentNotifications.filter(n => n.id !== id);
+    this.notificationsSubject.next(filteredNotifications);
+  }
+
+  clearAll(): void {
+    this.notificationsSubject.next([]);
+  }
+
+  private showNotification(notification: Notification): void {
+    const currentNotifications = this.notificationsSubject.value;
+    const updatedNotifications = [...currentNotifications, notification];
+    this.notificationsSubject.next(updatedNotifications);
+
+    // Auto-remove après la durée spécifiée
+    if (notification.duration && notification.duration > 0) {
+      setTimeout(() => {
+        this.removeNotification(notification.id);
+      }, notification.duration);
+    }
+  }
+
+  private generateId(): string {
+    return Math.random().toString(36).substr(2, 9);
+  }
+}
