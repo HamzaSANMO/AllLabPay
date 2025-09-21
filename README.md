@@ -258,4 +258,4 @@ Pour toute question ou problème :
 
 ---
 
-**Note**: Assurez-vous de remplacer toutes les valeurs par défaut (mots de passe, secrets, domaines) par des valeurs sécurisées avant le déploiement en production.
+**Note**: Assurez-vous de remplacer toutes les valeurs par défaut (mots de passe, secrets, domaines) par des valeurs sécurisées avant le déploiement en production.# AllLabPay
