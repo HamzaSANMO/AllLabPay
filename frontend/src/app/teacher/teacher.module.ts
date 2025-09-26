@@ -15,17 +15,33 @@ import { MatIconModule } from '@angular/material/icon';
 import { TpGradesComponent } from './tp-grades.component';
 import { CreateTpComponent } from './create-tp/create-tp.component';
 import { ScheduleTpComponent } from './schedule-tp/schedule-tp.component';
+import { TpManagementComponent } from './tp-management/tp-management.component';
+import { PaymentTrackingComponent } from './payment-tracking/payment-tracking.component';
+import { ResultsPublicationComponent } from './results-publication/results-publication.component';
+import { TeacherMobileNavComponent } from './teacher-mobile-nav/teacher-mobile-nav.component';
+import { TeacherProfileComponent } from './teacher-profile/teacher-profile.component';
 
 const routes: Routes = [
-  { path: 'create-tp', component: CreateTpComponent },
-  { path: 'schedule-tp/:tpId', component: ScheduleTpComponent }
+  { path: 'tps', component: TpManagementComponent },
+  { path: 'tps/create', component: CreateTpComponent },
+  { path: 'tps/:tpId/schedule', component: ScheduleTpComponent },
+  { path: 'tps/:tpId/grades', component: TpGradesComponent },
+  { path: 'payments', component: PaymentTrackingComponent },
+  { path: 'results', component: ResultsPublicationComponent },
+  { path: 'profile', component: TeacherProfileComponent },
+  { path: '', redirectTo: 'tps', pathMatch: 'full' }
 ];
 
 @NgModule({
   declarations: [
     TpGradesComponent,
     CreateTpComponent,
-    ScheduleTpComponent
+    ScheduleTpComponent,
+    TpManagementComponent,
+    PaymentTrackingComponent,
+    ResultsPublicationComponent,
+    TeacherMobileNavComponent,
+    TeacherProfileComponent
   ],
   imports: [
     CommonModule,
@@ -43,7 +59,8 @@ const routes: Routes = [
     MatIconModule
   ],
   exports: [
-    TpGradesComponent
+    TpGradesComponent,
+    TeacherMobileNavComponent
   ]
 })
 export class TeacherModule { }

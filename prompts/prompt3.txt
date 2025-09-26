@@ -1,0 +1,38 @@
+Contexte :  
+Projet LabPay, backend consolidé.  
+Frontend Angular + TailwindCSS.  
+Objectif : implémenter/améliorer les interfaces enseignants pour gérer TP, notes et publications.  
+
+Workflow enseignant :  
+- Connexion via email + mot de passe.  
+- Création TP.  
+- Programmation TP (groupes, salles, horaires, nb étudiants).  
+- Suivi paiements et inscriptions.  
+- Saisie notes par étudiant/groupe.  
+- Publication résultats (possible uniquement après saisie complète).  
+- Génération PDF résultats.  
+
+Tâches :  
+1. **Pages enseignants à implémenter/améliorer** :  
+   - Dashboard enseignant (statistiques rapides).  
+   - Création TP (formulaire complet).  
+   - Gestion TP (liste, éditer, programmer, supprimer).  
+   - Programmation TP (groupes, salles, horaires).  
+   - Suivi paiements (liste étudiants ayant payé).  
+   - Saisie notes TP (par étudiant/groupe).  
+   - Publication résultats (après saisie complète).  
+   - Génération PDF résultats.  
+
+2. **Communication backend** :  
+   - Consommer endpoints `/api/teacher/**`.  
+   - JWT avec rôle TEACHER.  
+   - Popup confirmation pour actions critiques (publication, suppression).  
+
+3. **Design & UX** :  
+   - Mobile-first.  
+   - Navigation fixe visible en bas.  
+   - Feedback (progression, loaders, toasts).  
+   - Interfaces hiérarchisées et fluides.  
+
+⚡ Sortie attendue :  
+Composants Angular enseignants complets, reliés au backend, mobile-first, publication résultats conditionnée à saisie des notes.  

@@ -1,0 +1,13 @@
+/* Styles spécifiques au composant de profil */
+.profile-section {
+  transition: all 0.3s ease-in-out;
+}
+
+.form-field {
+  transition: all 0.2s ease-in-out;
+}
+
+.form-field:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}

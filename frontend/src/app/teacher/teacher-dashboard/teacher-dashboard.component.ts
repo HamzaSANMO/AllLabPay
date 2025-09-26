@@ -89,6 +89,10 @@ export class TeacherDashboardComponent implements OnInit {
     this.router.navigate(['/teacher/payments']);
   }
 
+  navigateToResults(): void {
+    this.router.navigate(['/teacher/results']);
+  }
+
   createNewTP(): void {
     this.router.navigate(['/teacher/tps/create']);
   }

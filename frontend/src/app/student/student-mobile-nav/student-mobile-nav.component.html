@@ -1,0 +1,62 @@
+<!-- Navigation mobile fixe en bas -->
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
+  <div class="flex items-center justify-around py-2">
+    <!-- Accueil -->
+    <button
+      (click)="navigateTo('dashboard')"
+      [class]="'flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ' + (navigationItems[0].active ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700')"
+    >
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ navigationItems[0].icon }}"></path>
+      </svg>
+      <span class="text-xs font-medium">{{ navigationItems[0].label }}</span>
+    </button>
+
+    <!-- TP -->
+    <button
+      (click)="navigateTo('tps')"
+      [class]="'flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ' + (navigationItems[1].active ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700')"
+    >
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ navigationItems[1].icon }}"></path>
+      </svg>
+      <span class="text-xs font-medium">{{ navigationItems[1].label }}</span>
+    </button>
+
+    <!-- Paiements -->
+    <button
+      (click)="navigateTo('payments')"
+      [class]="'flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ' + (navigationItems[2].active ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700')"
+    >
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ navigationItems[2].icon }}"></path>
+      </svg>
+      <span class="text-xs font-medium">{{ navigationItems[2].label }}</span>
+    </button>
+
+    <!-- Notes -->
+    <button
+      (click)="navigateTo('grades')"
+      [class]="'flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ' + (navigationItems[3].active ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700')"
+    >
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ navigationItems[3].icon }}"></path>
+      </svg>
+      <span class="text-xs font-medium">{{ navigationItems[3].label }}</span>
+    </button>
+
+    <!-- Profil -->
+    <button
+      (click)="navigateTo('profile')"
+      [class]="'flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ' + (navigationItems[4].active ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700')"
+    >
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ navigationItems[4].icon }}"></path>
+      </svg>
+      <span class="text-xs font-medium">{{ navigationItems[4].label }}</span>
+    </button>
+  </div>
+</div>
+
+<!-- Espace pour éviter que le contenu soit caché par la navigation fixe -->
+<div class="h-20 md:hidden"></div>

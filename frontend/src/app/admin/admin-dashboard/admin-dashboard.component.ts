@@ -50,6 +50,22 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  get totalUsers(): number {
+    return this.globalStats?.['totalUsers'] || 0;
+  }
+
+  get totalTPs(): number {
+    return this.globalStats?.['totalTPs'] || 0;
+  }
+
+  get totalPayments(): number {
+    return this.globalStats?.['totalPayments'] || 0;
+  }
+
+  get totalDepartements(): number {
+    return this.globalStats?.['totalDepartements'] || 0;
+  }
+
   get userName(): string {
     return this.roleService.getCurrentUserName();
   }

@@ -1,0 +1,252 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Navigation mobile -->
+  <app-teacher-mobile-nav></app-teacher-mobile-nav>
+
+  <!-- En-tête -->
+  <div class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Publication des Résultats</h1>
+          <p class="mt-2 text-gray-600">Publiez les résultats de vos TP après saisie complète des notes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <!-- TP avec notes complètes -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Notes Complètes</dt>
+                <dd class="text-lg font-medium text-gray-900">{{ tps.filter(tp => tp.canPublish).length }}</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TP publiés -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Résultats Publiés</dt>
+                <dd class="text-lg font-medium text-gray-900">{{ tps.filter(tp => tp.published).length }}</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TP en attente -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">En Attente</dt>
+                <dd class="text-lg font-medium text-gray-900">{{ tps.filter(tp => !tp.canPublish && !tp.published).length }}</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recherche -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+      <div class="max-w-md">
+        <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Rechercher un TP</label>
+        <input
+          type="text"
+          id="search"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Rechercher par titre..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        >
+      </div>
+    </div>
+
+    <!-- Liste des TP -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+          Mes TP ({{ filteredTPs.length }})
+        </h3>
+
+        <!-- Loading state -->
+        <div *ngIf="isLoading" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p class="mt-2 text-gray-500">Chargement des TP...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!isLoading && filteredTPs.length === 0" class="text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun TP trouvé</h3>
+          <p class="mt-1 text-sm text-gray-500">
+            <span *ngIf="searchTerm">Aucun TP ne correspond à votre recherche.</span>
+            <span *ngIf="!searchTerm">Aucun TP créé pour le moment.</span>
+          </p>
+        </div>
+
+        <!-- TP List -->
+        <div *ngIf="!isLoading && filteredTPs.length > 0" class="space-y-6">
+          <div *ngFor="let tp of filteredTPs" class="border border-gray-200 rounded-lg p-6">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center space-x-3 mb-4">
+                  <h4 class="text-lg font-medium text-gray-900">{{ tp.title }}</h4>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getStatusColor(tp.status)">
+                    {{ getStatusText(tp.status) }}
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getPublishedStatusColor(tp.published)">
+                    {{ getPublishedStatusText(tp.published) }}
+                  </span>
+                </div>
+
+                <!-- Progression des notes -->
+                <div class="mb-4">
+                  <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                    <span>Progression des notes</span>
+                    <span>{{ tp.gradedStudents }}/{{ tp.totalStudents }} étudiants</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      class="h-2 rounded-full transition-all duration-300" 
+                      [ngClass]="getCompletionColor(tp)"
+                      [style.width.%]="getCompletionPercentage(tp)"
+                    ></div>
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">
+                    {{ getCompletionPercentage(tp) }}% complété
+                  </div>
+                </div>
+
+                <!-- Statistiques des notes -->
+                <div *ngIf="tp.gradedStudents > 0" class="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span class="font-medium text-gray-500">Moyenne:</span>
+                    <span class="ml-1 text-gray-900">{{ tp.averageGrade | number:'1.1-1' }}/20</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-gray-500">Meilleure note:</span>
+                    <span class="ml-1 text-gray-900">{{ tp.highestGrade | number:'1.1-1' }}/20</span>
+                  </div>
+                  <div>
+                    <span class="font-medium text-gray-500">Plus basse:</span>
+                    <span class="ml-1 text-gray-900">{{ tp.lowestGrade | number:'1.1-1' }}/20</span>
+                  </div>
+                </div>
+
+                <!-- Message d'état -->
+                <div *ngIf="!tp.canPublish" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                  <div class="flex">
+                    <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <div class="text-sm text-yellow-800">
+                      <p class="font-medium">Notes incomplètes</p>
+                      <p>Vous devez saisir toutes les notes avant de pouvoir publier les résultats.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="tp.canPublish && !tp.published" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div class="flex">
+                    <svg class="w-5 h-5 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-sm text-green-800">
+                      <p class="font-medium">Prêt pour publication</p>
+                      <p>Toutes les notes ont été saisies. Vous pouvez maintenant publier les résultats.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="tp.published" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div class="flex">
+                    <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    <div class="text-sm text-blue-800">
+                      <p class="font-medium">Résultats publiés</p>
+                      <p>Les résultats sont visibles par les étudiants.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex flex-wrap gap-2">
+              <button 
+                *ngIf="tp.canPublish && !tp.published"
+                (click)="publishResults(tp.id)"
+                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+                Publier les résultats
+              </button>
+
+              <button 
+                *ngIf="tp.published"
+                (click)="unpublishResults(tp.id)"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Retirer la publication
+              </button>
+
+              <button 
+                *ngIf="tp.gradedStudents > 0"
+                (click)="generatePDF(tp.id)"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Générer PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

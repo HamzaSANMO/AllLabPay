@@ -1,0 +1,35 @@
+Contexte :  
+Projet LabPay, backend consolidé (Prompt 1).  
+Frontend Angular + TailwindCSS existant, basé sur `designAllLabPay`.  
+Objectif : compléter/améliorer toutes les interfaces étudiants en mobile-first.  
+
+Workflow étudiant :  
+- Connexion (email + mot de passe).  
+- Dashboard : voir TP disponibles/nouveaux, TP payés, notes.  
+- Paiement TP via MTN MoMo, Moov Money, Celtiis → reçu PDF.  
+- Consultation notes et TP programmés.  
+- Profil étudiant.  
+
+Tâches :  
+1. **Pages étudiants à implémenter/améliorer** :  
+   - Connexion étudiant.  
+   - Dashboard étudiant (aperçu TP : nouveaux, payés, notes).  
+   - Liste TP → filtre filière/niveau → bouton payer.  
+   - Paiement TP (choix opérateur, confirmation, reçu PDF).  
+   - Page Notes (tableau des résultats).  
+   - Profil étudiant (infos de compte).  
+
+2. **Communication backend** :  
+   - Consommer endpoints `/api/student/**`.  
+   - JWT avec rôle STUDENT.  
+   - Vérifier qu’un étudiant voit uniquement ses filières/niveaux.  
+   - Gérer possibilité de L1, L2, L3 simultanées.  
+
+3. **Design & UX** :  
+   - Mobile-first.  
+   - Navigation fixe visible en bas (jamais hamburger).  
+   - Style moderne inspiré Washington Post (sobre + accents bleus).  
+   - Feedback (loaders, toasts).  
+
+⚡ Sortie attendue :  
+Composants Angular pour étudiants, fluides, responsive, reliés au backend, gestion TP/notes/paiements propre.  

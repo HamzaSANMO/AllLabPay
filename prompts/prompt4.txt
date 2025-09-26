@@ -1,0 +1,36 @@
+Contexte :  
+Projet LabPay, backend consolidé.  
+Frontend Angular + TailwindCSS existant à améliorer.  
+Objectif : implémenter les interfaces administrateurs et vérifier la cohérence finale du projet.  
+
+Workflow admin :  
+- Connexion via email + mot de passe.  
+- Gérer enseignants et étudiants.  
+- Importer étudiants via Excel.  
+- Configurer numéros de paiement par département.  
+- Superviser tous les TP et résultats.  
+- Générer rapports/statistiques.  
+- Vérification finale du système.  
+
+Tâches :  
+1. **Pages admins à implémenter/améliorer** :  
+   - Dashboard admin (statistiques globales).  
+   - Gestion enseignants (ajout, activation/désactivation).  
+   - Gestion étudiants (activation/désactivation, import Excel).  
+   - Configuration paiements (numéros MoMo/Moov/Celtiis).  
+   - Supervision TP (créés, programmés, publiés).  
+   - Rapports/statistiques (export PDF/Excel).  
+
+2. **Communication backend** :  
+   - Consommer endpoints `/api/admin/**`.  
+   - JWT avec rôle ADMIN.  
+   - Admin doit avoir visibilité totale sur enseignants, étudiants, TP, paiements.  
+
+3. **Vérifications finales** :  
+   - Page d’accueil conservée intacte.  
+   - Menus visibles et fixes, mobile-first.  
+   - Vérifier cohérence globale backend ↔ frontend.  
+   - Corriger incohérences mineures (routes, composants partagés).  
+
+⚡ Sortie attendue :  
+Interfaces admins complètes, reliées au backend, mobile-first, cohérence totale du projet prête pour déploiement.  

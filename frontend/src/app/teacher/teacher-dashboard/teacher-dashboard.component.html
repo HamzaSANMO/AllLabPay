@@ -1,4 +1,7 @@
 <div class="min-h-screen bg-gray-50">
+  <!-- Navigation mobile -->
+  <app-teacher-mobile-nav></app-teacher-mobile-nav>
+
   <!-- En-tête du tableau de bord -->
   <div class="bg-white shadow">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -20,7 +23,7 @@
   <!-- Contenu principal -->
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Cartes d'action rapide -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
       <!-- Carte TP -->
       <div class="bg-white overflow-hidden shadow rounded-lg">
         <div class="p-5">
@@ -132,6 +135,34 @@
           </div>
         </div>
       </div>
+
+      <!-- Carte Résultats -->
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-purple-600 rounded-md flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Résultats</dt>
+                <dd class="text-lg font-medium text-gray-900">Publication des résultats</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="text-sm">
+            <button (click)="navigateToResults()" class="font-medium text-purple-600 hover:text-purple-500">
+              Publier les résultats
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Section des statistiques -->
@@ -150,7 +181,7 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Total TP</dt>
-                <dd class="text-2xl font-bold text-gray-900">0</dd>
+                <dd class="text-2xl font-bold text-gray-900">{{ statistics?.totalTPs || recentTPs.length }}</dd>
               </dl>
             </div>
           </div>
@@ -171,7 +202,7 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Total Étudiants</dt>
-                <dd class="text-2xl font-bold text-gray-900">0</dd>
+                <dd class="text-2xl font-bold text-gray-900">{{ statistics?.totalStudents || 0 }}</dd>
               </dl>
             </div>
           </div>
@@ -192,7 +223,7 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Paiements en attente</dt>
-                <dd class="text-2xl font-bold text-gray-900">0</dd>
+                <dd class="text-2xl font-bold text-gray-900">{{ statistics?.pendingPayments || 0 }}</dd>
               </dl>
             </div>
           </div>
@@ -203,10 +234,23 @@
     <!-- Section des TP récents -->
     <div class="bg-white shadow rounded-lg">
       <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-          TP Récents
-        </h3>
-        <div class="text-center py-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            TP Récents
+          </h3>
+          <button (click)="navigateToTPs()" class="text-sm text-blue-600 hover:text-blue-500">
+            Voir tous →
+          </button>
+        </div>
+        
+        <!-- Loading state -->
+        <div *ngIf="isLoading" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p class="mt-2 text-gray-500">Chargement des TP...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!isLoading && recentTPs.length === 0" class="text-center py-8">
           <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
@@ -216,6 +260,38 @@
             <button (click)="createNewTP()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
               Créer un TP
             </button>
+          </div>
+        </div>
+
+        <!-- TP List -->
+        <div *ngIf="!isLoading && recentTPs.length > 0" class="space-y-4">
+          <div *ngFor="let tp of recentTPs" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <div class="flex-1">
+                <h4 class="text-lg font-medium text-gray-900">{{ tp.title }}</h4>
+                <p class="mt-1 text-sm text-gray-600">{{ tp.description }}</p>
+                <div class="mt-2 flex items-center space-x-4 text-sm text-gray-500">
+                  <span>{{ tp.currentStudents }}/{{ tp.maxStudents }} étudiants</span>
+                  <span>{{ tp.prix || 0 }} FCFA</span>
+                  <span>{{ tp.status }}</span>
+                </div>
+              </div>
+              <div class="flex space-x-2">
+                <button 
+                  (click)="viewTPDetails(tp.id)"
+                  class="text-blue-600 hover:text-blue-500 text-sm font-medium"
+                >
+                  Voir
+                </button>
+                <button 
+                  *ngIf="tp.status === 'DRAFT'"
+                  (click)="scheduleTP(tp.id)"
+                  class="text-green-600 hover:text-green-500 text-sm font-medium"
+                >
+                  Programmer
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

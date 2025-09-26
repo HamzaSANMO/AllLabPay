@@ -47,8 +47,20 @@ public class SecurityConfig {
                         // Auth publique
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // 🔓 TEMPORAIRE : on ouvre toutes les autres routes
-                        .anyRequest().permitAll()
+                        // Endpoints étudiants
+                        .requestMatchers("/api/student/**").hasRole("STUDENT")
+                        
+                        // Endpoints enseignants
+                        .requestMatchers("/api/teacher/**").hasRole("TEACHER")
+                        
+                        // Endpoints admin
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        
+                        // Endpoints publics pour les TP
+                        .requestMatchers("/api/tps/public/**").permitAll()
+                        
+                        // Tous les autres endpoints nécessitent une authentification
+                        .anyRequest().authenticated()
                 )
 
                 // Tu laisses ton filtre JWT mais il n’empêche rien pour l’instant
@@ -70,7 +82,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:80"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

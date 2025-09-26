@@ -1,0 +1,8 @@
+/* Styles spécifiques au composant des notes */
+.grade-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.grade-badge:hover {
+  transform: scale(1.05);
+}

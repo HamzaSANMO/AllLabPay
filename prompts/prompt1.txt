@@ -1,0 +1,18 @@
+Contexte :  
+Projet LabPay (FAST-UAC). Backend Spring Boot + PostgreSQL déjà en place à ~70%.  
+Objectif : vérifier et corriger les entités, méthodes et config pour un backend robuste, sans casser l’existant.  
+
+Tâches :  
+1. Vérifier toutes les entités JPA et corriger les relations (OneToMany, ManyToOne, etc.) pour éviter UnknownPathException.  
+2. Vérifier qu’aucune classe ou méthode n’est dupliquée.  
+3. Ajouter la méthode manquante `findByTpIdAndStatus(Long tpId, RegistrationStatus status)` dans `RegistrationRepository`.  
+4. Centraliser config JWT dans `jwt-config.properties` avec clé HS512 ≥ 64 octets.  
+5. Utiliser `Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))` avec `SignatureAlgorithm.HS512`.  
+6. Ajouter `jwt.issuer` et `jwt.audience` au token.  
+7. Vérifier la sécurité (CORS autorisant `http://localhost`, filtre JWT, rôle STUDENT/TEACHER/ADMIN).  
+8. Nettoyer `application.properties` (garder MySQL config, Hibernate et import jwt-config).  
+9. Vérifier AuthController : login avec email/matricule + password → retour objet clair `{token, user}`.  
+10. Gérer erreurs : 401 (BadCredentials), 500 (serveur).  
+
+⚡ Sortie attendue :  
+Backend robuste, propre, sans duplication, JWT fonctionnel HS512, endpoints sécurisés prêts pour Angular.  
