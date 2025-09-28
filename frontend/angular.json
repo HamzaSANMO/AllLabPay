@@ -96,7 +96,7 @@
       }
     }
   },
-  "defaultProject": "tp-management-app",
+  "defaultProject": "frontend",
   "cli": {
     "analytics": false
   }

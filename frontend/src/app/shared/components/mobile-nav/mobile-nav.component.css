@@ -1,0 +1,24 @@
+.mobile-nav {
+  background: #1e293b; /* bleu foncé */
+  color: white;
+  padding: 1rem;
+}
+
+.mobile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav li {
+  margin: 0.5rem 0;
+}
+
+.mobile-nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.mobile-nav a:hover {
+  text-decoration: underline;
+}

@@ -1,3 +1,4 @@
+import { FormsModule, ReactiveFormsModule, CommonModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PaymentsComponent } from './payments.component';
 import { PaymentService } from '../services/payment.service';
@@ -14,7 +15,8 @@ describe('PaymentsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PaymentsComponent],
-      imports: [HttpClientTestingModule],
+      imports: [
+    FormsModule, ReactiveFormsModule, CommonModule,HttpClientTestingModule],
       providers: [PaymentService, RegistrationService]
     }).compileComponents();
 

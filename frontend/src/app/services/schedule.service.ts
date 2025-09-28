@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +10,7 @@ import { TPSchedule, ScheduleTPDto } from '@app/models/schedule.model';
   providedIn: 'root'
 })
 export class ScheduleService {
-  private apiUrl = `${environment.apiUrl}/teacher`;
+  private apiUrl: any = `${environment.apiUrl}/teacher`;
 
   constructor(private http: HttpClient) { }
 

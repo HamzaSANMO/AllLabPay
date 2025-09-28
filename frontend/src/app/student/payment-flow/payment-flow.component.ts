@@ -1,3 +1,4 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -117,7 +118,7 @@ export class PaymentFlowComponent implements OnInit {
 
       const paymentData = {
         amount: this.tp.prix,
-        description: `Paiement pour TP: ${this.tp.titre}`,
+        description: `Paiement pour TP: ${this.tp.title}`,
         paymentMethod: this.selectedProvider,
         phoneNumber: this.paymentForm.value.phoneNumber,
         tpId: this.tp.id

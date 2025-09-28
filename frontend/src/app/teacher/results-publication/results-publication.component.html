@@ -31,7 +31,7 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Notes Complètes</dt>
-                <dd class="text-lg font-medium text-gray-900">{{ tps.filter(tp => tp.canPublish).length }}</dd>
+                <dd class="text-lg font-medium text-gray-900">{{ canPublishCount }}</dd>
               </dl>
             </div>
           </div>
@@ -52,7 +52,7 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">Résultats Publiés</dt>
-                <dd class="text-lg font-medium text-gray-900">{{ tps.filter(tp => tp.published).length }}</dd>
+                <dd class="text-lg font-medium text-gray-900">{{ publishedCount }}</dd>
               </dl>
             </div>
           </div>
@@ -73,7 +73,7 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 truncate">En Attente</dt>
-                <dd class="text-lg font-medium text-gray-900">{{ tps.filter(tp => !tp.canPublish && !tp.published).length }}</dd>
+                <dd class="text-lg font-medium text-gray-900">{{ pendingCount }}</dd>
               </dl>
             </div>
           </div>

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RoleService } from '../../services/role.service';
-import { User } from '../../models/auth.model';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-student-profile',
@@ -15,151 +14,128 @@ export class StudentProfileComponent implements OnInit {
   isLoading = true;
   isEditing = false;
   isSaving = false;
-  profileForm: FormGroup;
-  passwordForm: FormGroup;
   showPasswordForm = false;
   successMessage = '';
   errorMessage = '';
 
+  // Variables pour remplacer les formulaires
+  nom = '';
+  prenom = '';
+  email = '';
+  matricule = '';
+  phone = '';
+  address = '';
+  birthDate = '';
+  emergencyContact = '';
+  emergencyPhone = '';
+
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+
   constructor(
-    private fb: FormBuilder,
     private authService: AuthService,
     private roleService: RoleService,
     private router: Router
-  ) {
-    this.profileForm = this.fb.group({
-      nom: ['', [Validators.required, Validators.minLength(2)]],
-      prenom: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      matricule: ['', [Validators.required]],
-      phone: ['', [Validators.pattern(/^[0-9]{8,10}$/)]],
-      address: [''],
-      birthDate: [''],
-      emergencyContact: [''],
-      emergencyPhone: ['', [Validators.pattern(/^[0-9]{8,10}$/)]]
-    });
-
-    this.passwordForm = this.fb.group({
-      currentPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
-  }
+  ) {}
 
   ngOnInit(): void {
-    // Vérifier que l'utilisateur est bien un étudiant
     if (!this.roleService.isStudent()) {
       this.router.navigate(['/']);
       return;
     }
 
     this.authService.authState$.subscribe(state => {
-      this.currentUser = state.user;
-      if (state.user) {
+      this.currentUser = state.user as User;
+      if (this.currentUser) {
         this.loadUserProfile();
       }
     });
   }
 
   loadUserProfile(): void {
-    if (this.currentUser) {
-      this.profileForm.patchValue({
-        nom: this.currentUser.nom,
-        prenom: this.currentUser.prenom,
-        email: this.currentUser.email,
-        matricule: this.currentUser.matricule,
-        phone: this.currentUser.phone || '',
-        address: this.currentUser.address || '',
-        birthDate: this.currentUser.birthDate || '',
-        emergencyContact: this.currentUser.emergencyContact || '',
-        emergencyPhone: this.currentUser.emergencyPhone || ''
-      });
-      this.isLoading = false;
-    }
+    if (!this.currentUser) return;
+
+    this.nom = this.currentUser.firstName || '';
+    this.prenom = this.currentUser.lastName || '';
+    this.email = this.currentUser.email || '';
+    this.matricule = this.currentUser.matricule || '';
+    this.phone = this.currentUser.phone || '';
+    this.address = this.currentUser.address || '';
+    this.birthDate = this.currentUser.birthDate || '';
+    this.emergencyContact = this.currentUser.emergencyContact || '';
+    this.emergencyPhone = this.currentUser.emergencyPhone || '';
+
+    this.isLoading = false;
   }
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
     this.successMessage = '';
     this.errorMessage = '';
-    
+
     if (!this.isEditing) {
-      // Annuler les modifications
       this.loadUserProfile();
     }
   }
 
   saveProfile(): void {
-    if (this.profileForm.valid) {
-      this.isSaving = true;
-      this.successMessage = '';
-      this.errorMessage = '';
+    if (!this.currentUser) return;
 
-      const updatedData = this.profileForm.value;
-      
-      // Simuler la sauvegarde
-      setTimeout(() => {
-        // Mettre à jour l'utilisateur local
-        if (this.currentUser) {
-          this.currentUser = { ...this.currentUser, ...updatedData };
-          localStorage.setItem('auth_user', JSON.stringify(this.currentUser));
-          
-          // Mettre à jour l'état d'authentification
-          this.authService.refreshUserInfo().subscribe({
-            next: () => {
-              this.isSaving = false;
-              this.isEditing = false;
-              this.successMessage = 'Profil mis à jour avec succès';
-            },
-            error: (error) => {
-              this.isSaving = false;
-              this.errorMessage = 'Erreur lors de la mise à jour du profil';
-              console.error('Erreur:', error);
-            }
-          });
+    this.isSaving = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    const updatedData: User = {
+      ...this.currentUser,
+      firstName: this.nom,
+      lastName: this.prenom,
+      email: this.email,
+      matricule: this.matricule,
+      phone: this.phone,
+      address: this.address,
+      birthDate: this.birthDate,
+      emergencyContact: this.emergencyContact,
+      emergencyPhone: this.emergencyPhone
+    };
+
+    setTimeout(() => {
+      this.currentUser = { ...updatedData };
+      localStorage.setItem('auth_user', JSON.stringify(this.currentUser));
+
+      this.authService.refreshUserInfo().subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.isEditing = false;
+          this.successMessage = 'Profil mis à jour avec succès';
+        },
+        error: (err) => {
+          this.isSaving = false;
+          this.errorMessage = 'Erreur lors de la mise à jour du profil';
+          console.error(err);
         }
-      }, 1000);
-    }
+      });
+    }, 1000);
   }
 
   changePassword(): void {
-    if (this.passwordForm.valid) {
-      this.isSaving = true;
-      this.successMessage = '';
-      this.errorMessage = '';
-
-      const passwordData = this.passwordForm.value;
-      
-      // Simuler le changement de mot de passe
-      setTimeout(() => {
-        this.isSaving = false;
-        this.showPasswordForm = false;
-        this.passwordForm.reset();
-        this.successMessage = 'Mot de passe modifié avec succès';
-      }, 1000);
+    if (this.newPassword !== this.confirmPassword) {
+      this.errorMessage = 'Les mots de passe ne correspondent pas';
+      return;
     }
-  }
 
-  passwordMatchValidator(form: FormGroup) {
-    const newPassword = form.get('newPassword');
-    const confirmPassword = form.get('confirmPassword');
-    
-    if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    }
-    
-    return null;
-  }
+    this.isSaving = true;
+    this.successMessage = '';
+    this.errorMessage = '';
 
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.profileForm.get(fieldName);
-    return field ? field.invalid && (field.dirty || field.touched) : false;
-  }
-
-  isPasswordFieldInvalid(fieldName: string): boolean {
-    const field = this.passwordForm.get(fieldName);
-    return field ? field.invalid && (field.dirty || field.touched) : false;
+    setTimeout(() => {
+      this.isSaving = false;
+      this.showPasswordForm = false;
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.confirmPassword = '';
+      this.successMessage = 'Mot de passe modifié avec succès';
+    }, 1000);
   }
 
   navigateToDashboard(): void {

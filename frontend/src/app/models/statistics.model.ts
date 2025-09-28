@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 export interface GlobalStatistics {
   totalTPs: number;
   activeTPs: number;
@@ -16,6 +18,7 @@ export interface GlobalStatistics {
   totalAmount: number;
   totalGrades: number;
   averageGrade: number;
+  totalDepartements?: number;
 }
 
 export interface FiliereStatistics {
@@ -48,4 +51,7 @@ export interface TeacherStatistics {
   totalAmount: number;
   totalGrades: number;
   averageGrade: number;
+  totalStudents?: number;
+  pendingPayments?: number;
+  
 }

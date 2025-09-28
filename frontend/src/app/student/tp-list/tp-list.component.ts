@@ -1,185 +1,163 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { TpService } from '../../services/tp.service';
-import { AuthService } from '../../services/auth.service';
-import { RoleService } from '../../services/role.service';
-import { TP } from '../../models/tp.model';
-import { User } from '../../models/auth.model';
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Router } from "@angular/router";
+import { TpService } from "../../services/tp.service";
+import { AuthService } from "../../services/auth.service";
+import { RoleService } from "../../services/role.service";
+import { TP } from "../../models/tp.model";
+import { User } from "../../models/auth.model";
 
 @Component({
-  selector: 'app-tp-list',
-  templateUrl: './tp-list.component.html',
-  styleUrls: ['./tp-list.component.css']
+  selector: "app-tp-list",
+  templateUrl: "./tp-list.component.html",
+  styleUrls: ["./tp-list.component.css"],
 })
 export class TpListComponent implements OnInit {
   currentUser: User | null = null;
   isLoading = true;
   tps: TP[] = [];
   filteredTPs: TP[] = [];
-  
-  // Filtres
-  selectedFiliere = '';
-  selectedNiveau = '';
-  searchTerm = '';
-  
-  // Options de filtrage
+
   filieres: any[] = [];
   niveaux: any[] = [];
+
+  // valeurs des filtres
+  selectedFiliere = "";
+  selectedNiveau = "";
+  searchTerm = "";
 
   constructor(
     private tpService: TpService,
     private authService: AuthService,
     private roleService: RoleService,
-    private router: Router
+    public router: Router
   ) {}
 
   ngOnInit(): void {
-    // Vérifier que l'utilisateur est bien un étudiant
     if (!this.roleService.isStudent()) {
-      this.router.navigate(['/']);
+      this.router.navigate(["/"]);
       return;
     }
 
-    this.authService.authState$.subscribe(state => {
+    this.authService.authState$.subscribe((state) => {
       this.currentUser = state.user;
       if (state.user) {
         this.loadTPs();
-        this.loadFilterOptions();
       }
     });
   }
 
   loadTPs(): void {
     this.isLoading = true;
-    
-    if (this.currentUser?.filiere?.id) {
-      this.tpService.getAvailableTPsByFiliere(this.currentUser.filiere.id).subscribe({
-        next: (tps) => {
-          this.tps = tps;
-          this.filteredTPs = tps;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Erreur lors du chargement des TP:', error);
-          this.isLoading = false;
-        }
-      });
-    } else {
-      // Charger tous les TP si pas de filière spécifique
-      this.tpService.getAllTps().subscribe({
-        next: (tps) => {
-          this.tps = tps;
-          this.filteredTPs = tps;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Erreur lors du chargement des TP:', error);
-          this.isLoading = false;
-        }
-      });
-    }
+
+    const filiereId = this.currentUser?.filiere?.id;
+
+    const obs = filiereId
+      ? this.tpService.getAvailableTPsByFiliere(filiereId)
+      : this.tpService.getAllTps();
+
+    obs.subscribe({
+      next: (tps) => {
+        this.tps = tps;
+        this.filteredTPs = tps;
+        this.extractFilterOptions();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      },
+    });
   }
 
-  loadFilterOptions(): void {
-    // Extraire les filières et niveaux uniques des TP
+  extractFilterOptions(): void {
     const filiereSet = new Set();
     const niveauSet = new Set();
-    
-    this.tps.forEach(tp => {
-      if (tp.filiere) {
-        filiereSet.add(JSON.stringify(tp.filiere));
-      }
-      if (tp.niveau) {
-        niveauSet.add(JSON.stringify(tp.niveau));
-      }
+
+    this.tps.forEach((tp) => {
+      if (tp.filiere) filiereSet.add(JSON.stringify(tp.filiere));
+      if (tp.niveau) niveauSet.add(JSON.stringify(tp.niveau));
     });
-    
-    this.filieres = Array.from(filiereSet).map(f => JSON.parse(f as string));
-    this.niveaux = Array.from(niveauSet).map(n => JSON.parse(n as string));
+
+    this.filieres = Array.from(filiereSet).map((f) => JSON.parse(f as string));
+    this.niveaux = Array.from(niveauSet).map((n) => JSON.parse(n as string));
   }
 
-  applyFilters(): void {
-    this.filteredTPs = this.tps.filter(tp => {
-      const matchesFiliere = !this.selectedFiliere || tp.filiere?.id.toString() === this.selectedFiliere;
-      const matchesNiveau = !this.selectedNiveau || tp.niveau?.id.toString() === this.selectedNiveau;
-      const matchesSearch = !this.searchTerm || 
-        tp.titre.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        tp.description.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      return matchesFiliere && matchesNiveau && matchesSearch;
-    });
+  applyFilters(search: string, filiereId: string, niveauId: string): void {
+    this.searchTerm = search;
+    this.selectedFiliere = filiereId;
+    this.selectedNiveau = niveauId;
+
+    this.filteredTPs = this.tps.filter((tp) => {
+  const matchesFiliere = !filiereId || tp.filiere === filiereId;
+  const matchesNiveau = !niveauId || tp.niveau === niveauId;
+
+  const matchesSearch =
+    !search ||
+    tp.title.toLowerCase().includes(search.toLowerCase()) ||
+    tp.description.toLowerCase().includes(search.toLowerCase());
+
+  return matchesFiliere && matchesNiveau && matchesSearch;
+});
   }
 
-  onFiliereChange(): void {
-    this.applyFilters();
-  }
-
-  onNiveauChange(): void {
-    this.applyFilters();
-  }
-
-  onSearchChange(): void {
-    this.applyFilters();
-  }
-
-  clearFilters(): void {
-    this.selectedFiliere = '';
-    this.selectedNiveau = '';
-    this.searchTerm = '';
-    this.filteredTPs = this.tps;
-  }
-
-  registerToTP(tpId: number): void {
-    this.router.navigate(['/student/tps', tpId, 'register']);
+  clearFilters(
+    searchInput: HTMLInputElement,
+    filiereSelect: HTMLSelectElement,
+    niveauSelect: HTMLSelectElement
+  ): void {
+    searchInput.value = "";
+    filiereSelect.value = "";
+    niveauSelect.value = "";
+    this.applyFilters("", "", "");
   }
 
   viewTPDetails(tpId: number): void {
-    this.router.navigate(['/student/tps', tpId]);
+    this.router.navigate(["/student/tps", tpId]);
   }
 
   payForTP(tpId: number): void {
-    this.router.navigate(['/student/payment', tpId]);
+    this.router.navigate(["/student/payment", tpId]);
   }
 
   getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'AVAILABLE':
-        return 'bg-green-100 text-green-800';
-      case 'FULL':
-        return 'bg-red-100 text-red-800';
-      case 'CLOSED':
-        return 'bg-gray-100 text-gray-800';
+      case "AVAILABLE":
+        return "bg-green-100 text-green-800";
+      case "FULL":
+        return "bg-red-100 text-red-800";
+      case "CLOSED":
+        return "bg-gray-100 text-gray-800";
       default:
-        return 'bg-blue-100 text-blue-800';
+        return "bg-blue-100 text-blue-800";
     }
   }
 
   getStatusText(status: string): string {
     switch (status) {
-      case 'AVAILABLE':
-        return 'Disponible';
-      case 'FULL':
-        return 'Complet';
-      case 'CLOSED':
-        return 'Fermé';
+      case "AVAILABLE":
+        return "Disponible";
+      case "FULL":
+        return "Complet";
+      case "CLOSED":
+        return "Fermé";
       default:
         return status;
     }
   }
 
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XOF',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "XOF",
+      minimumFractionDigits: 0,
     }).format(price);
   }
 
   formatDate(date: string | Date): string {
-    return new Date(date).toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(date).toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   }
 }

@@ -93,7 +93,7 @@
               <label>Salle *</label>
               <select formControlName="room" class="form-control">
                 <option value="">Sélectionner une salle</option>
-                <option *ngFor="let room of rooms" [value]="room">{{ room }}</option>
+                <option *ngFor="let room of rooms" [value]="room">{{ this.room }}</option>
               </select>
               <div class="error-message" *ngIf="group.get('room')?.invalid && group.get('room')?.touched">
                 La salle est requise

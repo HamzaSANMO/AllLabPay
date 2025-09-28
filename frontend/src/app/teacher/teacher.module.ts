@@ -12,6 +12,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
+import { SharedModule } from './../shared/shared.module';
+
 import { TpGradesComponent } from './tp-grades.component';
 import { CreateTpComponent } from './create-tp/create-tp.component';
 import { ScheduleTpComponent } from './schedule-tp/schedule-tp.component';
@@ -60,7 +62,13 @@ const routes: Routes = [
   ],
   exports: [
     TpGradesComponent,
-    TeacherMobileNavComponent
+    CreateTpComponent,
+    ScheduleTpComponent,
+    TpManagementComponent,
+    PaymentTrackingComponent,
+    ResultsPublicationComponent,
+    TeacherMobileNavComponent,
+    TeacherProfileComponent
   ]
 })
 export class TeacherModule { }

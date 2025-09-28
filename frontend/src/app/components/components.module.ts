@@ -1,22 +1,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from './../shared/shared.module';
 
-import { TpListComponent } from './tp-list/tp-list.component';
+// Composants réutilisables
 import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { TpListComponent } from './tp-list/tp-list.component';
+
 
 @NgModule({
-  declarations: [
-    TpListComponent,
-    NavBarComponent
-  ],
+  declarations: [],
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    SharedModule
   ],
   exports: [
-    TpListComponent,
-    NavBarComponent
+   
   ]
 })
 export class ComponentsModule { }

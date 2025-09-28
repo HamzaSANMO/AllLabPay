@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RoleService } from '../../services/role.service';
 
+import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-student-login',
   templateUrl: './student-login.component.html',

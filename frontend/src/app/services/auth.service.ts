@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -51,16 +53,23 @@ export class AuthService {
   }
 
   login(loginData: LoginDto): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/login`, loginData).pipe(
-      tap((response: any) => {
-        if (response && response.token && response.user) {
-          this.storeAuth(response.token, response.user);
-          this.router.navigate(['/dashboard']);
-        }
-      }),
-      catchError(this.handleError)
-    );
-  }
+  return this.http.post<any>(`${this.API_URL}/login`, loginData).pipe(
+    tap((response: any) => {
+      console.log("Réponse brute du backend:", response);
+
+      // ⚡️ Adapte selon la structure de ton backend
+      const token = response.token || response.accessToken;
+      const user = response.user || { username: response.username };
+
+      if (token) {
+        this.storeAuth(token, user);
+        this.router.navigate(['/dashboard']);
+      }
+    }),
+    catchError(this.handleError)
+  );
+}
+
 
   logout(): void {
     this.clearAuth();

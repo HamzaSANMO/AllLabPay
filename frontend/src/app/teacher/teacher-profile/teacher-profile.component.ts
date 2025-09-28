@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { User } from '../../models/auth.model';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-teacher-profile',
@@ -44,15 +44,15 @@ export class TeacherProfileComponent implements OnInit {
 
   loadUserProfile(): void {
     this.authService.authState$.subscribe(state => {
-      this.currentUser = state.user;
+      this.currentUser = state.user as User;
       if (this.currentUser) {
         this.profileForm.patchValue({
           firstName: this.currentUser.firstName || '',
           lastName: this.currentUser.lastName || '',
           email: this.currentUser.email || '',
           phone: this.currentUser.phone || '',
-          departement: this.currentUser.departement || '',
-          grade: this.currentUser.grade || '',
+          departement: (this.currentUser as any).departement || '',
+          grade: (this.currentUser as any).grade || '',
           speciality: this.currentUser.speciality || ''
         });
       }
@@ -62,7 +62,7 @@ export class TeacherProfileComponent implements OnInit {
   passwordMatchValidator(form: FormGroup) {
     const newPassword = form.get('newPassword');
     const confirmPassword = form.get('confirmPassword');
-    
+
     if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
     } else {
@@ -70,7 +70,7 @@ export class TeacherProfileComponent implements OnInit {
         confirmPassword.setErrors(null);
       }
     }
-    
+
     return null;
   }
 
@@ -78,9 +78,7 @@ export class TeacherProfileComponent implements OnInit {
     if (this.profileForm.valid) {
       this.isLoading = true;
       const profileData = this.profileForm.value;
-      
-      // Simuler la mise à jour du profil
-      // Dans une vraie application, vous appelleriez this.authService.updateProfile(profileData)
+
       setTimeout(() => {
         this.isLoading = false;
         this.snackBar.open('Profil mis à jour avec succès', 'Fermer', { duration: 3000 });
@@ -92,9 +90,7 @@ export class TeacherProfileComponent implements OnInit {
     if (this.passwordForm.valid) {
       this.isPasswordLoading = true;
       const passwordData = this.passwordForm.value;
-      
-      // Simuler le changement de mot de passe
-      // Dans une vraie application, vous appelleriez this.authService.changePassword(passwordData)
+
       setTimeout(() => {
         this.isPasswordLoading = false;
         this.passwordForm.reset();

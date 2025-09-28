@@ -1,3 +1,4 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { PaymentService } from '../services/payment.service';
 import { RegistrationService } from '../services/registration.service';

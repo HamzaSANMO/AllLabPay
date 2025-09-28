@@ -1,3 +1,4 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -13,7 +14,7 @@ import {
   providedIn: 'root'
 })
 export class StatisticsService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl: any = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

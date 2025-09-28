@@ -13,7 +13,7 @@ export interface Notification {
   providedIn: 'root'
 })
 export class NotificationService {
-  private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+  private notificationsSubject: BehaviorSubject<Notification[]> = new BehaviorSubject<Notification[]>([]);
   public notifications$ = this.notificationsSubject.asObservable();
 
   showSuccess(message: string, title?: string, duration: number = 5000): void {
@@ -71,7 +71,6 @@ export class NotificationService {
     const updatedNotifications = [...currentNotifications, notification];
     this.notificationsSubject.next(updatedNotifications);
 
-    // Auto-remove après la durée spécifiée
     if (notification.duration && notification.duration > 0) {
       setTimeout(() => {
         this.removeNotification(notification.id);

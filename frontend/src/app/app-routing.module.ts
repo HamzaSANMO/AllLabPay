@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+
+import { SharedModule } from './shared/shared.module';
 import { HomeComponent } from './home/home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -15,23 +19,29 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
-  
+
   // Routes étudiant
   { path: 'student/dashboard', component: StudentDashboardComponent },
-  
+
   // Routes enseignant
   { path: 'teacher/dashboard', component: TeacherDashboardComponent },
   { path: 'teacher', loadChildren: () => import('./teacher/teacher.module').then(m => m.TeacherModule) },
-  
+
   // Routes administrateur
   { path: 'admin/dashboard', component: AdminDashboardComponent },
   { path: 'admin/users/create-teacher', component: CreateTeacherComponent },
-  
+
   { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedModule,
+    RouterModule.forRoot(routes)
+  ],
+  exports: [RouterModule] // seul RouterModule doit être exporté
 })
 export class AppRoutingModule { }

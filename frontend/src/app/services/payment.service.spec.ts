@@ -1,3 +1,4 @@
+import { FormsModule, ReactiveFormsModule, CommonModule } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { PaymentService } from './payment.service';
@@ -8,7 +9,8 @@ describe('PaymentService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [
+    FormsModule, ReactiveFormsModule, CommonModule,HttpClientTestingModule],
       providers: [PaymentService]
     });
     service = TestBed.inject(PaymentService);

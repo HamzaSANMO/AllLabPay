@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -7,7 +9,7 @@ import { LoadingService } from '../services/loading.service';
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
 
-  private totalRequests = 0;
+  private totalRequests: any = 0;
 
   constructor(private loadingService: LoadingService) {}
 

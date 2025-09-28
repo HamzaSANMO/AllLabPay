@@ -58,16 +58,12 @@ export class StudentMobileNavComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Vérifier que l'utilisateur est bien un étudiant
-    if (!this.roleService.isStudent()) {
-      return;
-    }
+    if (!this.roleService.isStudent()) return;
 
     this.authService.authState$.subscribe(state => {
       this.currentUser = state.user;
     });
 
-    // Écouter les changements de route
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute = event.url;
@@ -75,7 +71,6 @@ export class StudentMobileNavComponent implements OnInit {
       }
     });
 
-    // Initialiser l'état actif
     this.updateActiveItems();
   }
 

@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { TpService } from '../../services/tp.service';
 import { GradeService } from '../../services/grade.service';
@@ -183,4 +185,17 @@ export class ResultsPublicationComponent implements OnInit {
   getPublishedStatusText(published: boolean): string {
     return published ? 'Publié' : 'Non publié';
   }
+
+  get publishedCount(): number {
+  return this.tps.filter(tp => tp.published).length;
+}
+
+get canPublishCount(): number {
+  return this.tps.filter(tp => tp.canPublish).length;
+}
+
+get pendingCount(): number {
+  return this.tps.filter(tp => !tp.canPublish && !tp.published).length;
+}
+
 }

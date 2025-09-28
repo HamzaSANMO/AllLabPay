@@ -1,5 +1,5 @@
 <div class="p-4">
-  <h2 class="text-xl font-bold mb-4">Notes pour TP {{ tpId }}</h2>
+  <h2 class="text-xl font-bold mb-4">Notes pour TP {{ this.tpId }}</h2>
   <form [formGroup]="gradeForm" (ngSubmit)="onSubmit()" class="mb-4">
     <select formControlName="studentId" class="p-2 border rounded w-full mb-2">
       <!-- Lister étudiants inscrits (via registrationService.getTPRegistrations) -->

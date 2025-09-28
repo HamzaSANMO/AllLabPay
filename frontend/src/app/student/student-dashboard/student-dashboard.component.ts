@@ -29,7 +29,6 @@ export class StudentDashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Vérifier que l'utilisateur est bien un étudiant
     if (!this.roleService.isStudent()) {
       this.router.navigate(['/']);
       return;
@@ -45,27 +44,17 @@ export class StudentDashboardComponent implements OnInit {
   }
 
   loadStudentData(): void {
-    // Charger les TP disponibles pour la filière de l'étudiant
     if (this.currentUser?.filiere?.id) {
       this.tpService.getAvailableTPsByFiliere(this.currentUser.filiere.id).subscribe({
-        next: (tps) => {
-          this.availableTPs = tps;
-        },
-        error: (error) => {
-          console.error('Erreur lors du chargement des TP:', error);
-        }
+        next: (tps) => this.availableTPs = tps,
+        error: (error) => console.error('Erreur lors du chargement des TP:', error)
       });
     }
 
-    // Charger les créneaux de l'étudiant
     if (this.currentUser?.id) {
       this.scheduleService.getStudentSchedules(this.currentUser.id).subscribe({
-        next: (schedules) => {
-          this.mySchedules = schedules;
-        },
-        error: (error) => {
-          console.error('Erreur lors du chargement des créneaux:', error);
-        }
+        next: (schedules) => this.mySchedules = schedules,
+        error: (error) => console.error('Erreur lors du chargement des créneaux:', error)
       });
     }
   }
@@ -108,23 +97,15 @@ export class StudentDashboardComponent implements OnInit {
 
   filterTPsByNiveau(niveauId: number): void {
     this.tpService.getAvailableTPsByNiveau(niveauId).subscribe({
-      next: (tps) => {
-        this.availableTPs = tps;
-      },
-      error: (error) => {
-        console.error('Erreur lors du filtrage par niveau:', error);
-      }
+      next: (tps) => this.availableTPs = tps,
+      error: (error) => console.error('Erreur lors du filtrage par niveau:', error)
     });
   }
 
   filterTPsByDepartement(departementId: number): void {
     this.tpService.getAvailableTPsByDepartement(departementId).subscribe({
-      next: (tps) => {
-        this.availableTPs = tps;
-      },
-      error: (error) => {
-        console.error('Erreur lors du filtrage par département:', error);
-      }
+      next: (tps) => this.availableTPs = tps,
+      error: (error) => console.error('Erreur lors du filtrage par département:', error)
     });
   }
 }

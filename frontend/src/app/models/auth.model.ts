@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 export interface RegisterDto {
   email: string;
   matricule: string;
@@ -18,7 +20,7 @@ export interface JwtResponse {
 }
 
 export interface User {
-  id?: number;
+  id: number;
   email: string;
   matricule: string;
   nom: string;

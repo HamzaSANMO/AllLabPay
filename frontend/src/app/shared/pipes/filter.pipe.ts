@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({

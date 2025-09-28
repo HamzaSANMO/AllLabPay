@@ -1,3 +1,4 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -16,6 +17,7 @@ export interface TP {
   enseignant: string;
 }
 
+import { OnInit } from '@angular/core';
 @Component({
   selector: 'app-tp-card',
 

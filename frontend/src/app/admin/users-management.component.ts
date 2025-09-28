@@ -1,45 +1,35 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { AdminService } from '../services/admin.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-users-management',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './users-management.component.html',
 })
 export class UsersManagementComponent implements OnInit {
   users: any[] = [];
-  teacherForm: FormGroup;
 
-  constructor(private adminService: AdminService, private fb: FormBuilder) {
-    this.teacherForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      departement: ['', Validators.required]
-    });
-  }
+  constructor(private adminService: AdminService) {}
 
   ngOnInit() {
     this.loadUsers();
   }
 
   loadUsers(role?: string) {
-    this.adminService.listUsers(role).subscribe(data => {
-      this.users = data;
-    });
+    this.adminService.listUsers(role).subscribe((data) => (this.users = data));
   }
 
-  createTeacher() {
-    if (this.teacherForm.valid) {
-      this.adminService.createTeacher(this.teacherForm.value).subscribe(() => {
+  createTeacher(email: string, password: string, departement: string) {
+    if (email && password && departement) {
+      this.adminService.createTeacher({ email, password, departement }).subscribe(() => {
         this.loadUsers('TEACHER');
-        this.teacherForm.reset();
       });
     }
   }
 
   toggleUserActive(id: number, isActive: boolean) {
-    this.adminService.toggleUserActive(id, isActive).subscribe(() => {
-      this.loadUsers();
-    });
+    this.adminService.toggleUserActive(id, isActive).subscribe(() => this.loadUsers());
   }
 }

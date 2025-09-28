@@ -1,7 +1,14 @@
 <div class="p-4">
   <h2 class="text-xl font-bold mb-4">Journal d'Audit</h2>
-  <input [(ngModel)]="filter" (input)="onFilterChange()" placeholder="Filtrer par action/entité" 
-         class="p-2 border rounded w-full mb-4">
+
+  <!-- Utilisation d'une référence locale au lieu de ngModel -->
+  <input
+    #filterInput
+    (input)="onFilterChange(filterInput.value)"
+    placeholder="Filtrer par action/entité"
+    class="p-2 border rounded w-full mb-4"
+  >
+
   <div infiniteScroll (scrolled)="onScroll()" class="space-y-4">
     <div *ngFor="let log of logs" class="bg-white p-4 rounded shadow">
       <p>Acteur: {{ log.actorId }}</p>
