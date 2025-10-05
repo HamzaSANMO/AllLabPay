@@ -22,13 +22,20 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserService userService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getRequestURI();
+        // Ignorer certaines routes
+        String path = request.getServletPath();
+        if (path.startsWith("/auth/") || path.startsWith("/swagger") || path.startsWith("/tps/public/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        // ⚡ Ignorer register/login pour ne pas bloquer l'accès public
-        if (path.startsWith("/api/auth/")) {
+        // Gérer les requêtes OPTIONS (préflight)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,8 +57,8 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

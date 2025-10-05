@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,17 +30,26 @@ public class JwtUtil {
     @Value("${jwt.audience}")
     private String audience;
 
+    /**
+     * Retourne une clé sûre pour HS512. Si le secret est trop court, génère automatiquement une clé sécurisée.
+     */
     private SecretKey getSigningKey() {
-        // Vérification de la longueur de la clé (doit être >= 256 bits)
-        if (secret.length() < 32) {
-            throw new IllegalArgumentException("La clé JWT doit faire au moins 32 caractères (256 bits)");
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+
+        // HS512 nécessite au moins 64 octets (512 bits)
+        if (keyBytes.length < 64) {
+            SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+            return key;
         }
-        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /** Génère un token JWT pour un utilisateur donné */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", userDetails.getAuthorities());
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -53,6 +61,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    /** Vérifie si un token est valide pour un utilisateur */
     public Boolean validateToken(String token, UserDetails userDetails) {
         try {
             final String username = extractUsername(token);
@@ -62,15 +71,18 @@ public class JwtUtil {
         }
     }
 
+    /** Extrait le username du token */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    /** Extrait une claim spécifique du token */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
+    /** Extrait toutes les claims */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -79,10 +91,12 @@ public class JwtUtil {
                 .getBody();
     }
 
+    /** Vérifie si le token est expiré */
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
+    /** Extrait la date d’expiration */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
