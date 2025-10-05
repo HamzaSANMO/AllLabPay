@@ -31,6 +31,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -48,22 +49,22 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // Endpoints étudiants
-                        .requestMatchers("/api/student/**").hasRole("STUDENT")
-                        
+                        .requestMatchers("/api/student/**").hasAuthority("STUDENT")
+
                         // Endpoints enseignants
-                        .requestMatchers("/api/teacher/**").hasRole("TEACHER")
-                        
+                        .requestMatchers("/api/teacher/**").hasAuthority("TEACHER")
+
                         // Endpoints admin
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+
                         // Endpoints publics pour les TP
                         .requestMatchers("/api/tps/public/**").permitAll()
-                        
+
                         // Tous les autres endpoints nécessitent une authentification
                         .anyRequest().authenticated()
                 )
 
-                // Tu laisses ton filtre JWT mais il n’empêche rien pour l’instant
+                // Filtre JWT appliqué après authentification
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -82,7 +83,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:80"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
